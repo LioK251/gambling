@@ -176,6 +176,25 @@
             color: var(--green);
         }
 
+        .credit-btn {
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--gold);
+            background: linear-gradient(135deg, rgba(244, 196, 48, 0.1), rgba(244, 196, 48, 0.02));
+            color: var(--gold);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .credit-btn:hover {
+            background: linear-gradient(135deg, rgba(244, 196, 48, 0.2), rgba(244, 196, 48, 0.05));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--gold-glow);
+        }
+
         .stats-btn {
             width: 40px;
             height: 40px;
@@ -201,12 +220,64 @@
         nav {
             margin: 15px 0;
             overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold) rgba(255,255,255,0.1);
+            position: relative;
+            padding-bottom: 5px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
         nav::-webkit-scrollbar {
-            display: none;
+            height: 4px;
+        }
+
+        nav::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+
+        nav::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 10px;
+        }
+
+        nav::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-dark);
+        }
+
+        /* Gradient indicators for scroll */
+        nav::before,
+        nav::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 5px;
+            width: 50px;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.9;
+        }
+
+        nav::before {
+            left: 0;
+            background: linear-gradient(90deg, var(--bg-dark) 0%, rgba(13, 13, 13, 0.8) 50%, transparent 100%);
+        }
+
+        nav::after {
+            right: 0;
+            background: linear-gradient(270deg, var(--bg-dark) 0%, rgba(13, 13, 13, 0.8) 50%, transparent 100%);
+        }
+
+        /* Scroll hint animation */
+        @keyframes scrollHint {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        nav.show-hint::after {
+            animation: scrollHint 2s ease-in-out 3;
+            box-shadow: inset -40px 0 30px -20px var(--gold-glow);
         }
 
         .nav-wrapper {
@@ -1239,6 +1310,420 @@
             z-index: 5;
         }
 
+        /* ======================= PLINKO ======================= */
+        .plinko-board {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            height: 450px;
+            margin: 0 auto 20px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
+            border-radius: 20px;
+            border: 2px solid var(--gold);
+            padding: 20px 10px;
+            overflow: hidden;
+        }
+
+        .plinko-peg {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(145deg, #999, #666);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .plinko-ball {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle at 30% 30%, var(--gold), var(--gold-dark));
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--gold-glow);
+            transition: all 0.15s ease-out;
+            z-index: 10;
+        }
+
+        .plinko-multipliers {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 5px;
+        }
+
+        .plinko-mult-slot {
+            flex: 1;
+            padding: 8px 2px;
+            margin: 0 1px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .plinko-mult-slot.active {
+            border-color: var(--gold);
+            background: rgba(244, 196, 48, 0.2);
+            box-shadow: 0 0 20px var(--gold-glow);
+            transform: scale(1.1);
+        }
+
+        .plinko-mult-slot.green { color: var(--green); }
+        .plinko-mult-slot.gold { color: var(--gold); }
+        .plinko-mult-slot.red { color: var(--red); }
+
+        .plinko-risk-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+
+        .plinko-risk-btn {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-panel);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .plinko-risk-btn.selected {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(244, 196, 48, 0.1);
+        }
+
+        /* ======================= LADDER ======================= */
+        .ladder-container {
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .ladder-board {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .ladder-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .ladder-tile {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, rgba(25,25,25,0.9), rgba(15,15,15,0.95));
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ladder-tile::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .ladder-tile:hover::before {
+            transform: translateX(100%);
+        }
+
+        .ladder-tile.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .ladder-tile.active {
+            border-color: var(--gold);
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .ladder-tile.revealed.win {
+            background: linear-gradient(135deg, rgba(57, 255, 20, 0.2), rgba(57, 255, 20, 0.05));
+            border-color: var(--green);
+            box-shadow: 0 0 25px var(--green-glow);
+            animation: ladderWin 0.5s ease-out;
+        }
+
+        .ladder-tile.revealed.lose {
+            background: linear-gradient(135deg, rgba(255, 49, 49, 0.2), rgba(255, 49, 49, 0.05));
+            border-color: var(--red);
+            box-shadow: 0 0 25px var(--red-glow);
+            animation: ladderLose 0.5s ease-out;
+        }
+
+        @keyframes ladderWin {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes ladderLose {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .ladder-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .ladder-info-item {
+            text-align: center;
+        }
+
+        .ladder-info-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .ladder-info-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        /* ======================= CASES ======================= */
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .case-item {
+            background: linear-gradient(145deg, rgba(25,25,25,0.9), rgba(15,15,15,0.95));
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .case-item:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--gold-glow);
+        }
+
+        .case-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(244, 196, 48, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .case-item:hover::before {
+            transform: translateX(100%);
+        }
+
+        .case-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .case-name {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+
+        .case-price {
+            font-family: 'Space Mono', monospace;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .case-opening {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 16px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
+            border: 2px solid var(--gold);
+        }
+
+        .case-reel {
+            display: flex;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+
+        .case-skin {
+            min-width: 140px;
+            max-width: 140px;
+            padding: 15px;
+            margin: 0 5px;
+            background: rgba(25,25,25,0.9);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .case-skin.legendary { border-color: var(--gold); }
+        .case-skin.rare { border-color: var(--purple); }
+        .case-skin.uncommon { border-color: var(--cyan); }
+        .case-skin.common { border-color: #888; }
+
+        .case-selector {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--gold);
+            box-shadow: 0 0 20px var(--gold-glow);
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        /* ======================= UPGRADE ======================= */
+        .upgrade-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .upgrade-slot {
+            background: linear-gradient(145deg, rgba(25,25,25,0.9), rgba(15,15,15,0.95));
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upgrade-slot:hover {
+            border-color: var(--gold);
+        }
+
+        .upgrade-slot.filled {
+            border-color: var(--green);
+            background: linear-gradient(145deg, rgba(57, 255, 20, 0.1), rgba(57, 255, 20, 0.02));
+        }
+
+        .upgrade-arrow {
+            font-size: 2rem;
+            color: var(--gold);
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .inventory-item {
+            background: rgba(25,25,25,0.9);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .inventory-item:hover {
+            transform: scale(1.05);
+            border-color: var(--gold);
+        }
+
+        .inventory-item.selected {
+            border-color: var(--green);
+            box-shadow: 0 0 20px var(--green-glow);
+        }
+
+        /* ======================= NOTIFICATION ======================= */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px 20px;
+            min-width: 250px;
+            z-index: 2000;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            border-color: var(--green);
+            background: linear-gradient(135deg, rgba(57, 255, 20, 0.1), rgba(57, 255, 20, 0.02));
+        }
+
+        .notification.info {
+            border-color: var(--cyan);
+            background: linear-gradient(135deg, rgba(0, 255, 247, 0.1), rgba(0, 255, 247, 0.02));
+        }
+
         /* ======================= MODAL ======================= */
         .modal-overlay {
             position: fixed;
@@ -1387,11 +1872,29 @@
             }
 
             .header-content {
-                gap: 10px;
+                gap: 8px;
             }
 
             .balance-display {
                 padding: 6px 12px;
+            }
+
+            .balance-amount {
+                font-size: 0.9rem;
+            }
+
+            nav {
+                margin: 12px 0;
+            }
+
+            .nav-item {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+
+            nav::before,
+            nav::after {
+                width: 30px;
             }
 
             .card {
@@ -1459,6 +1962,53 @@
                 width: 230px;
                 height: 230px;
             }
+
+            .credit-btn {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            .plinko-board {
+                height: 380px;
+            }
+
+            .ladder-tile {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+
+            .cases-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+
+            .case-item {
+                padding: 12px;
+            }
+
+            .case-icon {
+                font-size: 2.5rem;
+            }
+
+            .upgrade-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .upgrade-arrow {
+                transform: rotate(90deg);
+            }
+
+            .inventory-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+
+            .notification {
+                right: 10px;
+                min-width: 200px;
+                padding: 12px 15px;
+            }
         }
 
         @media (min-width: 768px) {
@@ -1519,6 +2069,7 @@
             <div class="header-content">
                 <div class="logo">ROYAL V5</div>
                 <div class="header-right">
+                    <button class="credit-btn" onclick="takeCredit()">💳 Credit</button>
                     <div class="balance-display">
                         <span class="balance-icon">💰</span>
                         <span class="balance-amount" id="balance">0</span>
@@ -1537,9 +2088,13 @@
                 <div class="nav-item" data-game="dice"><span>🎲 Dice</span></div>
                 <div class="nav-item" data-game="coinflip"><span>🪙 Flip</span></div>
                 <div class="nav-item" data-game="blackjack"><span>🃏 21</span></div>
-                <div class="nav-item" data-game="crash"><span>📈 Crash</span></div>
+                <div class="nav-item" data-game="crash"><span>🚀 Rocket</span></div>
                 <div class="nav-item" data-game="roulette"><span>🎡 Roulette</span></div>
                 <div class="nav-item" data-game="wheel"><span>🎯 Wheel</span></div>
+                <div class="nav-item" data-game="plinko"><span>🔻 Plinko</span></div>
+                <div class="nav-item" data-game="ladder"><span>🪜 Ladder</span></div>
+                <!-- <div class="nav-item" data-game="cases"><span>📦 Cases</span></div> -->
+                <!-- <div class="nav-item" data-game="upgrade"><span>⬆️ Upgrade</span></div> -->
             </div>
         </div>
     </nav>
@@ -1562,7 +2117,7 @@
                         <button class="quick-bet" onclick="setSlotsBet(50)">50$</button>
                         <button class="quick-bet" onclick="setSlotsBet(100)">100$</button>
                         <button class="quick-bet" onclick="setSlotsBet(250)">250$</button>
-                        <button class="quick-bet" onclick="setSlotsBet(500)">500$</button>
+                        <button class="quick-bet" onclick="setSlotsBet('max')">ALL-IN</button>
                     </div>
                     <div class="input-group">
                         <label>Bet</label>
@@ -1600,8 +2155,8 @@
                         <input type="number" id="minesBet" value="100" min="10">
                     </div>
                     <div class="input-group">
-                        <label>Bombs (1-24)</label>
-                        <input type="number" id="minesBombs" value="3" min="1" max="24">
+                        <label>Bombs (3-24)</label>
+                        <input type="number" id="minesBombs" value="3" min="3" max="24">
                     </div>
                     <button class="btn btn-primary" id="minesStartBtn" onclick="game.mines.start()">
                         Start Game
@@ -1635,7 +2190,7 @@
                         <button class="quick-bet" onclick="setDiceBet(50)">50$</button>
                         <button class="quick-bet" onclick="setDiceBet(100)">100$</button>
                         <button class="quick-bet" onclick="setDiceBet(250)">250$</button>
-                        <button class="quick-bet" onclick="setDiceBet(500)">MAX</button>
+                        <button class="quick-bet" onclick="setDiceBet('max')">ALL-IN</button>
                     </div>
                     <div class="input-group">
                         <label>Bet Amount</label>
@@ -1675,7 +2230,7 @@
                         <button class="quick-bet" onclick="setFlipBet(50)">50$</button>
                         <button class="quick-bet" onclick="setFlipBet(100)">100$</button>
                         <button class="quick-bet" onclick="setFlipBet(250)">250$</button>
-                        <button class="quick-bet" onclick="setFlipBet(500)">MAX</button>
+                        <button class="quick-bet" onclick="setFlipBet('max')">ALL-IN</button>
                     </div>
                     <div class="input-group">
                         <label>Bet Amount</label>
@@ -1719,21 +2274,21 @@
                 </div>
             </div>
 
-            <!-- CRASH -->
+            <!-- ROCKET -->
             <div class="game-scene" id="crash">
                 <div class="card">
                     <div class="crash-display" id="crashDisplay">
-                        <div class="crash-multiplier" id="crashMult">1.00x</div>
+                        <div class="crash-multiplier" id="crashMult">🚀 1.00x</div>
                         <div class="crash-line" id="crashLine"></div>
                     </div>
-                    <div id="crashStatus" class="status-message info">Place bet and watch it grow!</div>
+                    <div id="crashStatus" class="status-message info">Launch rocket and cash out before it explodes!</div>
                 </div>
                 <div class="card">
                     <div class="quick-bets">
                         <button class="quick-bet" onclick="setCrashBet(50)">50$</button>
                         <button class="quick-bet" onclick="setCrashBet(100)">100$</button>
                         <button class="quick-bet" onclick="setCrashBet(250)">250$</button>
-                        <button class="quick-bet" onclick="setCrashBet(500)">MAX</button>
+                        <button class="quick-bet" onclick="setCrashBet('max')">ALL-IN</button>
                     </div>
                     <div class="input-group">
                         <label>Bet Amount</label>
@@ -1741,10 +2296,10 @@
                     </div>
                     <div class="crash-actions">
                         <button class="btn btn-primary" id="crashStartBtn" onclick="game.crash.start()">
-                            Start
+                            🚀 Launch Rocket
                         </button>
                         <button class="btn btn-secondary" id="crashCashBtn" onclick="game.crash.cashout()" style="display:none">
-                            Cashout
+                            💰 Cash Out
                         </button>
                     </div>
                 </div>
@@ -1781,7 +2336,7 @@
                         <button class="quick-bet" onclick="setRouletteBet(50)">50$</button>
                         <button class="quick-bet" onclick="setRouletteBet(100)">100$</button>
                         <button class="quick-bet" onclick="setRouletteBet(250)">250$</button>
-                        <button class="quick-bet" onclick="setRouletteBet(500)">MAX</button>
+                        <button class="quick-bet" onclick="setRouletteBet('max')">ALL-IN</button>
                     </div>
                     <div class="input-group">
                         <label>Bet Amount</label>
@@ -1812,7 +2367,7 @@
                         <button class="quick-bet" onclick="setWheelBet(50)">50$</button>
                         <button class="quick-bet" onclick="setWheelBet(100)">100$</button>
                         <button class="quick-bet" onclick="setWheelBet(250)">250$</button>
-                        <button class="quick-bet" onclick="setWheelBet(500)">MAX</button>
+                        <button class="quick-bet" onclick="setWheelBet('max')">ALL-IN</button>
                     </div>
                     <div class="input-group">
                         <label>Bet Amount</label>
@@ -1823,6 +2378,119 @@
                     </button>
                 </div>
             </div>
+
+            <!-- PLINKO -->
+            <div class="game-scene" id="plinko">
+                <div class="card">
+                    <div class="plinko-risk-selector">
+                        <button class="plinko-risk-btn selected" onclick="game.plinko.selectRisk('low', this)">
+                            Low Risk
+                        </button>
+                        <button class="plinko-risk-btn" onclick="game.plinko.selectRisk('medium', this)">
+                            Medium Risk
+                        </button>
+                        <button class="plinko-risk-btn" onclick="game.plinko.selectRisk('high', this)">
+                            High Risk
+                        </button>
+                    </div>
+                    <div class="plinko-board" id="plinkoBoard">
+                        <!-- Pegs and ball will be generated by JS -->
+                        <div class="plinko-multipliers" id="plinkoMultipliers"></div>
+                    </div>
+                    <div id="plinkoStatus" class="status-message info">Choose risk level and drop the ball!</div>
+                </div>
+                <div class="card">
+                    <div class="quick-bets">
+                        <button class="quick-bet" onclick="setPlinkoBet(50)">50$</button>
+                        <button class="quick-bet" onclick="setPlinkoBet(100)">100$</button>
+                        <button class="quick-bet" onclick="setPlinkoBet(250)">250$</button>
+                        <button class="quick-bet" onclick="setPlinkoBet('max')">ALL-IN</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Bet Amount</label>
+                        <input type="number" id="plinkoBet" value="100" min="10">
+                    </div>
+                    <button class="btn btn-primary" id="plinkoBtn" onclick="game.plinko.drop()">
+                        Drop Ball
+                    </button>
+                </div>
+            </div>
+
+            <!-- LADDER -->
+            <div class="game-scene" id="ladder">
+                <div class="card">
+                    <div class="ladder-info">
+                        <div class="ladder-info-item">
+                            <div class="ladder-info-label">Current Row</div>
+                            <div class="ladder-info-value" id="ladderRow">0</div>
+                        </div>
+                        <div class="ladder-info-item">
+                            <div class="ladder-info-label">Multiplier</div>
+                            <div class="ladder-info-value" id="ladderMult">1.00x</div>
+                        </div>
+                        <div class="ladder-info-item">
+                            <div class="ladder-info-label">Profit</div>
+                            <div class="ladder-info-value" id="ladderProfit">$0</div>
+                        </div>
+                    </div>
+                    <div class="ladder-container">
+                        <div class="ladder-board" id="ladderBoard"></div>
+                    </div>
+                    <div id="ladderStatus" class="status-message info">Climb the ladder to increase your multiplier!</div>
+                </div>
+                <div class="card">
+                    <div class="input-group">
+                        <label>Bet Amount</label>
+                        <input type="number" id="ladderBet" value="100" min="10">
+                    </div>
+                    <button class="btn btn-primary" id="ladderStartBtn" onclick="game.ladder.start()">
+                        Start Climb
+                    </button>
+                    <button class="btn btn-secondary" id="ladderCashBtn" onclick="game.ladder.cashout()" style="display:none;margin-top:10px">
+                        Cashout: $0
+                    </button>
+                </div>
+            </div>
+
+            <!-- CASES -->
+            <!-- <div class="game-scene" id="cases">
+                <div class="card">
+                    <div id="caseOpening" class="case-opening" style="display:none;">
+                        <div class="case-selector"></div>
+                        <div class="case-reel" id="caseReel"></div>
+                    </div>
+                    <div id="caseStatus" class="status-message info">Choose a case to open!</div>
+                    <div class="cases-grid" id="casesGrid"></div>
+                </div>
+            </div> -->
+
+            <!-- UPGRADE -->
+            <!-- <div class="game-scene" id="upgrade">
+                <div class="card">
+                    <div class="upgrade-container">
+                        <div class="upgrade-slot" id="upgradeFrom" onclick="game.upgrade.selectFromInventory()">
+                            <div style="font-size:2rem;">📦</div>
+                            <div style="color:var(--text-muted);">Select Item</div>
+                        </div>
+                        <div class="upgrade-arrow">→</div>
+                        <div class="upgrade-slot" id="upgradeTo">
+                            <div style="font-size:2rem;">❓</div>
+                            <div style="color:var(--text-muted);">Target Item</div>
+                        </div>
+                    </div>
+                    <div id="upgradeChance" style="text-align:center;margin-bottom:15px;font-size:1.1rem;color:var(--cyan);">
+                        Select items to see chance
+                    </div>
+                    <div id="upgradeStatus" class="status-message info">Select an item from inventory to upgrade</div>
+                    <button class="btn btn-primary" id="upgradeBtn" onclick="game.upgrade.attempt()" disabled>
+                        Attempt Upgrade
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-title">Your Inventory</div>
+                    <div class="inventory-grid" id="inventory"></div>
+                </div>
+            </div> -->
         </div>
     </div>
 
@@ -2007,12 +2675,46 @@
         document.head.appendChild(style);
 
         // Quick bet setters
-        function setSlotsBet(amount) { document.getElementById('slotsBet').value = Math.min(amount, DB.getBalance()); }
-        function setDiceBet(amount) { document.getElementById('diceBet').value = Math.min(amount, DB.getBalance()); }
-        function setFlipBet(amount) { document.getElementById('flipBet').value = Math.min(amount, DB.getBalance()); }
-        function setCrashBet(amount) { document.getElementById('crashBet').value = Math.min(amount, DB.getBalance()); }
-        function setRouletteBet(amount) { document.getElementById('rouletteBet').value = Math.min(amount, DB.getBalance()); }
-        function setWheelBet(amount) { document.getElementById('wheelBet').value = Math.min(amount, DB.getBalance()); }
+        function setSlotsBet(amount) { 
+            document.getElementById('slotsBet').value = amount === 'max' ? DB.getBalance() : Math.min(amount, DB.getBalance()); 
+        }
+        function setDiceBet(amount) { 
+            document.getElementById('diceBet').value = amount === 'max' ? DB.getBalance() : Math.min(amount, DB.getBalance()); 
+        }
+        function setFlipBet(amount) { 
+            document.getElementById('flipBet').value = amount === 'max' ? DB.getBalance() : Math.min(amount, DB.getBalance()); 
+        }
+        function setCrashBet(amount) { 
+            document.getElementById('crashBet').value = amount === 'max' ? DB.getBalance() : Math.min(amount, DB.getBalance()); 
+        }
+        function setRouletteBet(amount) { 
+            document.getElementById('rouletteBet').value = amount === 'max' ? DB.getBalance() : Math.min(amount, DB.getBalance()); 
+        }
+        function setWheelBet(amount) { 
+            document.getElementById('wheelBet').value = amount === 'max' ? DB.getBalance() : Math.min(amount, DB.getBalance()); 
+        }
+        function setPlinkoBet(amount) { 
+            document.getElementById('plinkoBet').value = amount === 'max' ? DB.getBalance() : Math.min(amount, DB.getBalance()); 
+        }
+        
+        function takeCredit() {
+            const creditAmount = 500;
+            DB.addBalance(creditAmount);
+            showNotification(`Credit taken: $${creditAmount}`, 'info');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.textContent = message;
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                notif.style.opacity = '0';
+                notif.style.transform = 'translateX(400px)';
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+        }
 
         // ============ NAVIGATION ============
         const navItems = document.querySelectorAll('.nav-item');
@@ -2031,6 +2733,15 @@
                         scene.classList.add('active');
                     }
                 });
+
+                // Auto-scroll to active nav item
+                const nav = item.parentElement.parentElement;
+                const itemRect = item.getBoundingClientRect();
+                const navRect = nav.getBoundingClientRect();
+                
+                if (itemRect.left < navRect.left || itemRect.right > navRect.right) {
+                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
             });
         });
 
@@ -2137,7 +2848,7 @@
 
                     if (bet < 10) return alert('Minimum bet is $10');
                     if (bet > DB.getBalance()) return alert('Insufficient balance');
-                    if (bombs < 1 || bombs > 24) return alert('Bombs must be 1-24');
+                    if (bombs < 3 || bombs > 24) return alert('Bombs must be 3-24');
 
                     this.currentBet = bet;
                     this.bombCount = bombs;
@@ -2206,11 +2917,18 @@
                 getMultiplier() {
                     if (this.revealed === 0) return 1;
                     const safeSpots = 25 - this.bombCount;
+                    
+                    // Base multiplier from revealed tiles
                     let mult = 1;
                     for (let i = 0; i < this.revealed; i++) {
-                        mult *= safeSpots / (safeSpots - i);
+                        mult *= (safeSpots + this.bombCount * 0.5) / (safeSpots - i);
                     }
-                    return Math.min(mult * 0.97, 100); // 3% house edge, max 100x
+                    
+                    // Risk bonus: more bombs = higher multiplier
+                    const riskBonus = 1 + (this.bombCount / 25) * 0.5; // Up to 50% bonus with 24 bombs
+                    mult *= riskBonus;
+                    
+                    return Math.min(mult * 0.96, 200); // 4% house edge, max 200x
                 },
 
                 updateStats() {
@@ -2582,7 +3300,7 @@
                 }
             },
 
-            // ===== CRASH =====
+            // ===== ROCKET =====
             crash: {
                 multiplier: 1,
                 crashPoint: 0,
@@ -2608,7 +3326,7 @@
                     document.getElementById('crashStartBtn').style.display = 'none';
                     document.getElementById('crashCashBtn').style.display = 'block';
                     document.getElementById('crashStatus').className = 'status-message info';
-                    document.getElementById('crashStatus').textContent = 'Going up! Cash out before crash!';
+                    document.getElementById('crashStatus').textContent = '🚀 Rocket flying! Cash out before explosion!';
 
                     const multEl = document.getElementById('crashMult');
                     const lineEl = document.getElementById('crashLine');
@@ -2616,7 +3334,7 @@
 
                     this.interval = setInterval(() => {
                         this.multiplier += 0.01;
-                        multEl.textContent = this.multiplier.toFixed(2) + 'x';
+                        multEl.textContent = '🚀 ' + this.multiplier.toFixed(2) + 'x';
                         lineEl.style.width = Math.min(this.multiplier * 30, 90) + '%';
 
                         if (this.multiplier >= this.crashPoint) {
@@ -2650,14 +3368,14 @@
                     this.isPlaying = false;
 
                     const multEl = document.getElementById('crashMult');
-                    multEl.textContent = 'CRASH!';
+                    multEl.textContent = '💥 BOOM!';
                     multEl.classList.add('crashed');
 
                     DB.updateStats(this.currentBet, 0, false);
 
                     document.getElementById('crashStatus').className = 'status-message lose';
                     document.getElementById('crashStatus').textContent = 
-                        `Crashed at ${this.crashPoint.toFixed(2)}x!`;
+                        `Rocket exploded at ${this.crashPoint.toFixed(2)}x!`;
 
                     document.getElementById('crashStartBtn').style.display = 'block';
                     document.getElementById('crashCashBtn').style.display = 'none';
@@ -2700,7 +3418,7 @@
                     
                     // Random result
                     const resultIndex = Math.floor(Math.random() * 37);
-                    const result = resultIndex === 0 ? 'green' : (resultIndex % 2 === 0 ? 'red' : 'black');
+                    const result = resultIndex === 0 ? 'green' : (resultIndex % 2 === 0 ? 'black' : 'red');
                     
                     // Calculate rotation (5-8 full spins + result position)
                     const spins = 5 + Math.random() * 3;
@@ -2814,13 +3532,23 @@
                     DB.addBalance(-bet);
 
                     const wheel = document.getElementById('wheelFortune');
+                    
+                    // FIRST determine result, THEN calculate rotation to it
                     const resultIndex = Math.floor(Math.random() * this.segments.length);
                     const segment = this.segments[resultIndex];
                     
-                    // Calculate rotation
+                    // Calculate rotation to land on the selected segment
+                    // Pointer is at 0 degrees (right side), segments start at -90 degrees
                     const spins = 5 + Math.random() * 3;
                     const segmentAngle = 360 / this.segments.length;
-                    const targetAngle = 360 - (resultIndex * segmentAngle + segmentAngle / 2);
+                    
+                    // Calculate the angle where the segment center should be at pointer (0 degrees)
+                    // Each segment starts at (i * segmentAngle - 90), center is at start + segmentAngle/2
+                    const segmentCenterAngle = resultIndex * segmentAngle - 90 + segmentAngle / 2;
+                    
+                    // We want segmentCenterAngle to be at 0 degrees (pointer position)
+                    // So we need to rotate by (-segmentCenterAngle) to align it
+                    const targetAngle = -segmentCenterAngle + 90; // +90 to account for pointer being at right (0°)
                     const totalRotation = spins * 360 + targetAngle;
 
                     wheel.style.transition = 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
@@ -2860,6 +3588,650 @@
                         }, 100);
                     }, 5000);
                 }
+            },
+
+            // ===== PLINKO =====
+            plinko: {
+                dropping: false,
+                riskLevel: 'low',
+                multipliers: {
+                    low: [0.5, 0.7, 1, 1.3, 1.5, 1.3, 1, 0.7, 0.5],
+                    medium: [0.3, 0.5, 1, 2, 3, 2, 1, 0.5, 0.3],
+                    high: [0.2, 0.3, 0.5, 2, 5, 2, 0.5, 0.3, 0.2]
+                },
+
+                init() {
+                    this.drawPegs();
+                    this.drawMultipliers();
+                },
+
+                selectRisk(risk, btn) {
+                    if (this.dropping) return;
+                    document.querySelectorAll('.plinko-risk-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    this.riskLevel = risk;
+                    this.drawMultipliers();
+                },
+
+                drawPegs() {
+                    const board = document.getElementById('plinkoBoard');
+                    const rows = 12;
+                    const pegSpacing = 30;
+                    const startX = 175;
+                    const startY = 30;
+
+                    // Clear existing pegs
+                    const existingPegs = board.querySelectorAll('.plinko-peg');
+                    existingPegs.forEach(peg => peg.remove());
+
+                    for (let row = 0; row < rows; row++) {
+                        const pegsInRow = row + 3;
+                        const rowWidth = (pegsInRow - 1) * pegSpacing;
+                        const rowStartX = startX - rowWidth / 2;
+
+                        for (let col = 0; col < pegsInRow; col++) {
+                            const peg = document.createElement('div');
+                            peg.className = 'plinko-peg';
+                            peg.style.left = (rowStartX + col * pegSpacing) + 'px';
+                            peg.style.top = (startY + row * 30) + 'px';
+                            board.appendChild(peg);
+                        }
+                    }
+                },
+
+                drawMultipliers() {
+                    const container = document.getElementById('plinkoMultipliers');
+                    const mults = this.multipliers[this.riskLevel];
+                    
+                    container.innerHTML = '';
+                    mults.forEach(mult => {
+                        const slot = document.createElement('div');
+                        slot.className = 'plinko-mult-slot';
+                        if (mult >= 2) slot.classList.add('gold');
+                        else if (mult >= 1) slot.classList.add('green');
+                        else slot.classList.add('red');
+                        slot.textContent = mult + 'x';
+                        container.appendChild(slot);
+                    });
+                },
+
+                drop() {
+                    if (this.dropping) return;
+
+                    const bet = parseInt(document.getElementById('plinkoBet').value) || 0;
+                    if (bet < 10) return alert('Minimum bet is $10');
+                    if (bet > DB.getBalance()) return alert('Insufficient balance');
+
+                    this.dropping = true;
+                    DB.addBalance(-bet);
+
+                    const board = document.getElementById('plinkoBoard');
+                    const ball = document.createElement('div');
+                    ball.className = 'plinko-ball';
+                    ball.style.left = '168px';
+                    ball.style.top = '10px';
+                    board.appendChild(ball);
+
+                    document.getElementById('plinkoBtn').disabled = true;
+                    document.getElementById('plinkoStatus').className = 'status-message info';
+                    document.getElementById('plinkoStatus').textContent = 'Ball dropping...';
+
+                    // FIRST determine the final slot, THEN animate to it
+                    const rows = 12;
+                    const finalSlot = Math.floor(Math.random() * 9); // 0-8 slots
+                    
+                    // Generate path to reach that slot (binomial distribution)
+                    const path = [];
+                    let position = 4; // Start at middle
+                    for (let i = 0; i < rows; i++) {
+                        // Calculate direction needed to reach final slot
+                        const stepsRemaining = rows - i;
+                        const needsToMove = finalSlot - position;
+                        
+                        let goRight;
+                        if (position <= 0) {
+                            goRight = true; // Must go right
+                        } else if (position >= 8) {
+                            goRight = false; // Must go left
+                        } else if (needsToMove > stepsRemaining) {
+                            goRight = true; // Need to go right more
+                        } else if (needsToMove < -stepsRemaining) {
+                            goRight = false; // Need to go left more
+                        } else {
+                            // Add randomness but bias towards target
+                            const rightProbability = 0.5 + (needsToMove / stepsRemaining) * 0.3;
+                            goRight = Math.random() < rightProbability;
+                        }
+                        
+                        if (goRight) {
+                            position = Math.min(8, position + 1);
+                        } else {
+                            position = Math.max(0, position - 1);
+                        }
+                        path.push(position);
+                    }
+
+                    // Animate ball following the path
+                    let currentRow = 0;
+                    let x = 168;
+                    let y = 10;
+                    let slot = 4;
+
+                    const dropInterval = setInterval(() => {
+                        if (currentRow >= rows) {
+                            clearInterval(dropInterval);
+                            
+                            // Highlight winning slot
+                            const slots = document.querySelectorAll('.plinko-mult-slot');
+                            slots[finalSlot].classList.add('active');
+
+                            const multiplier = this.multipliers[this.riskLevel][finalSlot];
+                            const winnings = Math.floor(bet * multiplier);
+                            
+                            const statusEl = document.getElementById('plinkoStatus');
+                            
+                            if (multiplier >= 1) {
+                                DB.addBalance(winnings);
+                                DB.updateStats(bet, winnings, true);
+                                statusEl.className = 'status-message win';
+                                statusEl.textContent = `${multiplier}x! You won $${winnings.toLocaleString()}!`;
+                                if (multiplier >= 3) showWinAnimation();
+                            } else {
+                                const returned = winnings;
+                                DB.addBalance(returned);
+                                DB.updateStats(bet, 0, false);
+                                statusEl.className = 'status-message lose';
+                                statusEl.textContent = `${multiplier}x! Lost $${(bet - returned).toLocaleString()}`;
+                            }
+
+                            setTimeout(() => {
+                                ball.remove();
+                                slots[finalSlot].classList.remove('active');
+                                this.dropping = false;
+                                document.getElementById('plinkoBtn').disabled = false;
+                            }, 2000);
+                            return;
+                        }
+
+                        // Follow the predetermined path
+                        const newSlot = path[currentRow];
+                        const deltaX = (newSlot - slot) * 15;
+                        x += deltaX;
+                        slot = newSlot;
+                        
+                        y += 30;
+                        currentRow++;
+
+                        ball.style.left = x + 'px';
+                        ball.style.top = y + 'px';
+                    }, 150);
+                }
+            },
+
+            // ===== LADDER =====
+            ladder: {
+                playing: false,
+                currentRow: 0,
+                bet: 0,
+                multiplier: 1,
+                totalRows: 8,
+                board: [],
+
+                init() {
+                    this.drawBoard();
+                },
+
+                drawBoard() {
+                    const boardEl = document.getElementById('ladderBoard');
+                    boardEl.innerHTML = '';
+
+                    for (let row = this.totalRows - 1; row >= 0; row--) {
+                        const rowEl = document.createElement('div');
+                        rowEl.className = 'ladder-row';
+                        rowEl.dataset.row = row;
+
+                        const tilesPerRow = 3;
+                        for (let col = 0; col < tilesPerRow; col++) {
+                            const tile = document.createElement('div');
+                            tile.className = 'ladder-tile disabled';
+                            tile.innerHTML = '?';
+                            tile.onclick = () => this.selectTile(row, col, tile);
+                            rowEl.appendChild(tile);
+                        }
+
+                        boardEl.appendChild(rowEl);
+                    }
+                },
+
+                start() {
+                    const bet = parseInt(document.getElementById('ladderBet').value) || 0;
+                    if (bet < 10) return alert('Minimum bet is $10');
+                    if (bet > DB.getBalance()) return alert('Insufficient balance');
+
+                    this.playing = true;
+                    this.currentRow = 0;
+                    this.bet = bet;
+                    this.multiplier = 1;
+                    this.board = [];
+
+                    DB.addBalance(-bet);
+
+                    // Generate board
+                    for (let row = 0; row < this.totalRows; row++) {
+                        const winTile = Math.floor(Math.random() * 3);
+                        this.board[row] = { winTile };
+                    }
+
+                    this.drawBoard();
+                    this.updateInfo();
+                    this.enableRow(0);
+
+                    document.getElementById('ladderStartBtn').style.display = 'none';
+                    document.getElementById('ladderCashBtn').style.display = 'block';
+                    this.updateCashoutButton();
+
+                    document.getElementById('ladderStatus').className = 'status-message info';
+                    document.getElementById('ladderStatus').textContent = 'Choose a tile to climb!';
+                },
+
+                selectTile(row, col, tile) {
+                    if (!this.playing || row !== this.currentRow) return;
+                    if (tile.classList.contains('revealed')) return;
+
+                    const isWin = col === this.board[row].winTile;
+                    
+                    // Reveal all tiles in row
+                    const rowEl = tile.parentElement;
+                    const tiles = rowEl.querySelectorAll('.ladder-tile');
+                    tiles.forEach((t, idx) => {
+                        t.classList.add('revealed');
+                        t.classList.remove('active');
+                        if (idx === this.board[row].winTile) {
+                            t.classList.add('win');
+                            t.innerHTML = '⬆️';
+                        } else {
+                            t.classList.add('lose');
+                            t.innerHTML = '💀';
+                        }
+                        t.onclick = null;
+                    });
+
+                    if (isWin) {
+                        this.currentRow++;
+                        this.multiplier *= 1.5;
+                        this.updateInfo();
+                        this.updateCashoutButton();
+
+                        if (this.currentRow >= this.totalRows) {
+                            // Won all rows
+                            setTimeout(() => this.win(), 500);
+                        } else {
+                            // Continue to next row
+                            setTimeout(() => this.enableRow(this.currentRow), 500);
+                            document.getElementById('ladderStatus').className = 'status-message win';
+                            document.getElementById('ladderStatus').textContent = `Correct! Multiplier: ${this.multiplier.toFixed(2)}x`;
+                        }
+                    } else {
+                        // Lost
+                        setTimeout(() => this.lose(), 500);
+                    }
+                },
+
+                enableRow(row) {
+                    const rows = document.querySelectorAll('.ladder-row');
+                    const rowEl = rows[this.totalRows - 1 - row];
+                    const tiles = rowEl.querySelectorAll('.ladder-tile');
+                    tiles.forEach(tile => {
+                        tile.classList.remove('disabled');
+                        tile.classList.add('active');
+                    });
+                },
+
+                updateInfo() {
+                    document.getElementById('ladderRow').textContent = this.currentRow;
+                    document.getElementById('ladderMult').textContent = this.multiplier.toFixed(2) + 'x';
+                    const profit = Math.floor(this.bet * this.multiplier);
+                    document.getElementById('ladderProfit').textContent = '$' + profit.toLocaleString();
+                },
+
+                updateCashoutButton() {
+                    const btn = document.getElementById('ladderCashBtn');
+                    const amount = Math.floor(this.bet * this.multiplier);
+                    btn.textContent = `Cashout: $${amount.toLocaleString()}`;
+                },
+
+                cashout() {
+                    if (!this.playing || this.currentRow === 0) return;
+
+                    const winnings = Math.floor(this.bet * this.multiplier);
+                    DB.addBalance(winnings);
+                    DB.updateStats(this.bet, winnings, true);
+
+                    const statusEl = document.getElementById('ladderStatus');
+                    statusEl.className = 'status-message win';
+                    statusEl.textContent = `Cashed out at ${this.multiplier.toFixed(2)}x! Won $${winnings.toLocaleString()}!`;
+
+                    if (this.multiplier >= 3) showWinAnimation();
+
+                    this.reset();
+                },
+
+                win() {
+                    const winnings = Math.floor(this.bet * this.multiplier);
+                    DB.addBalance(winnings);
+                    DB.updateStats(this.bet, winnings, true);
+
+                    const statusEl = document.getElementById('ladderStatus');
+                    statusEl.className = 'status-message win';
+                    statusEl.textContent = `Reached the top! Won $${winnings.toLocaleString()} at ${this.multiplier.toFixed(2)}x!`;
+
+                    showWinAnimation();
+                    this.reset();
+                },
+
+                lose() {
+                    DB.updateStats(this.bet, 0, false);
+
+                    const statusEl = document.getElementById('ladderStatus');
+                    statusEl.className = 'status-message lose';
+                    statusEl.textContent = `Wrong choice! You lost $${this.bet.toLocaleString()}`;
+
+                    this.reset();
+                },
+
+                reset() {
+                    this.playing = false;
+                    this.currentRow = 0;
+                    this.multiplier = 1;
+                    
+                    document.getElementById('ladderStartBtn').style.display = 'block';
+                    document.getElementById('ladderCashBtn').style.display = 'none';
+                    
+                    setTimeout(() => this.drawBoard(), 2000);
+                }
+            },
+
+            // ===== CASES =====
+            cases: {
+                opening: false,
+                availableCases: [
+                    { id: 1, name: 'Bronze Case', icon: '📦', price: 50, skins: [
+                        { name: 'Basic Knife', rarity: 'common', value: 20, icon: '🔪' },
+                        { name: 'Simple Gun', rarity: 'common', value: 30, icon: '🔫' },
+                        { name: 'Blue Pistol', rarity: 'uncommon', value: 60, icon: '🔫' },
+                        { name: 'Rare Knife', rarity: 'rare', value: 120, icon: '🗡️' },
+                        { name: 'Golden AK', rarity: 'legendary', value: 300, icon: '💎' }
+                    ]},
+                    { id: 2, name: 'Silver Case', icon: '📦', price: 150, skins: [
+                        { name: 'Steel Blade', rarity: 'uncommon', value: 80, icon: '⚔️' },
+                        { name: 'Blue Rifle', rarity: 'uncommon', value: 100, icon: '🔫' },
+                        { name: 'Purple SMG', rarity: 'rare', value: 200, icon: '🔫' },
+                        { name: 'Dragon Knife', rarity: 'rare', value: 350, icon: '🐉' },
+                        { name: 'Diamond AWP', rarity: 'legendary', value: 800, icon: '💎' }
+                    ]},
+                    { id: 3, name: 'Gold Case', icon: '📦', price: 300, skins: [
+                        { name: 'Ruby Dagger', rarity: 'rare', value: 400, icon: '💎' },
+                        { name: 'Sapphire Gun', rarity: 'rare', value: 500, icon: '💎' },
+                        { name: 'Emerald Knife', rarity: 'legendary', value: 1000, icon: '💚' },
+                        { name: 'Golden Dragon', rarity: 'legendary', value: 1500, icon: '🐲' },
+                        { name: 'Mythic Blade', rarity: 'legendary', value: 2500, icon: '⚡' }
+                    ]}
+                ],
+
+                init() {
+                    this.loadInventory();
+                    this.drawCases();
+                },
+
+                drawCases() {
+                    const grid = document.getElementById('casesGrid');
+                    grid.innerHTML = '';
+                    
+                    this.availableCases.forEach(caseItem => {
+                        const div = document.createElement('div');
+                        div.className = 'case-item';
+                        div.innerHTML = `
+                            <div class="case-icon">${caseItem.icon}</div>
+                            <div class="case-name">${caseItem.name}</div>
+                            <div class="case-price">$${caseItem.price}</div>
+                        `;
+                        div.onclick = () => this.openCase(caseItem);
+                        grid.appendChild(div);
+                    });
+                },
+
+                openCase(caseItem) {
+                    if (this.opening) return;
+                    if (DB.getBalance() < caseItem.price) {
+                        return alert('Insufficient balance!');
+                    }
+
+                    this.opening = true;
+                    DB.addBalance(-caseItem.price);
+
+                    // Determine winner
+                    const rand = Math.random();
+                    let wonSkin;
+                    if (rand < 0.02) {
+                        wonSkin = caseItem.skins[4]; // Legendary 2%
+                    } else if (rand < 0.10) {
+                        wonSkin = caseItem.skins[3]; // Rare 8%
+                    } else if (rand < 0.30) {
+                        wonSkin = caseItem.skins[2]; // Uncommon 20%
+                    } else if (rand < 0.60) {
+                        wonSkin = caseItem.skins[1]; // Common 30%
+                    } else {
+                        wonSkin = caseItem.skins[0]; // Common 40%
+                    }
+
+                    // Create reel with random skins
+                    const reel = document.getElementById('caseReel');
+                    const opening = document.getElementById('caseOpening');
+                    const grid = document.getElementById('casesGrid');
+                    
+                    opening.style.display = 'block';
+                    grid.style.display = 'none';
+                    reel.innerHTML = '';
+                    reel.style.transform = 'translateX(0)';
+
+                    // Generate 50 items for reel
+                    for (let i = 0; i < 50; i++) {
+                        const skin = i === 45 ? wonSkin : caseItem.skins[Math.floor(Math.random() * caseItem.skins.length)];
+                        const div = document.createElement('div');
+                        div.className = `case-skin ${skin.rarity}`;
+                        div.innerHTML = `
+                            <div style="font-size:2rem;">${skin.icon}</div>
+                            <div style="font-size:0.8rem;margin-top:5px;">${skin.name}</div>
+                            <div style="color:var(--gold);font-size:0.75rem;">$${skin.value}</div>
+                        `;
+                        reel.appendChild(div);
+                    }
+
+                    document.getElementById('caseStatus').className = 'status-message info';
+                    document.getElementById('caseStatus').textContent = 'Opening...';
+
+                    // Animate
+                    setTimeout(() => {
+                        const offset = -(45 * 150) + (window.innerWidth / 2) - 70;
+                        reel.style.transform = `translateX(${offset}px)`;
+                    }, 100);
+
+                    setTimeout(() => {
+                        this.addToInventory(wonSkin);
+                        
+                        const statusEl = document.getElementById('caseStatus');
+                        statusEl.className = 'status-message win';
+                        statusEl.textContent = `You got ${wonSkin.name} worth $${wonSkin.value}!`;
+
+                        if (wonSkin.rarity === 'legendary') showWinAnimation();
+
+                        setTimeout(() => {
+                            opening.style.display = 'none';
+                            grid.style.display = 'grid';
+                            this.opening = false;
+                            statusEl.className = 'status-message info';
+                            statusEl.textContent = 'Choose a case to open!';
+                        }, 3000);
+                    }, 5000);
+                },
+
+                loadInventory() {
+                    const data = DB.load();
+                    if (!data.inventory) {
+                        data.inventory = [];
+                        DB.save(data);
+                    }
+                    return data.inventory;
+                },
+
+                addToInventory(skin) {
+                    const data = DB.load();
+                    if (!data.inventory) data.inventory = [];
+                    data.inventory.push({ ...skin, id: Date.now() + Math.random() });
+                    DB.save(data);
+                    this.updateInventoryDisplay();
+                },
+
+                removeFromInventory(itemId) {
+                    const data = DB.load();
+                    data.inventory = data.inventory.filter(item => item.id !== itemId);
+                    DB.save(data);
+                    this.updateInventoryDisplay();
+                },
+
+                updateInventoryDisplay() {
+                    const inventory = this.loadInventory();
+                    const grid = document.getElementById('inventory');
+                    if (!grid) return;
+                    
+                    grid.innerHTML = '';
+                    if (inventory.length === 0) {
+                        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);">Empty inventory</div>';
+                        return;
+                    }
+
+                    inventory.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'inventory-item';
+                        div.innerHTML = `
+                            <div style="font-size:1.5rem;">${item.icon}</div>
+                            <div style="font-size:0.7rem;margin-top:5px;">${item.name}</div>
+                            <div style="color:var(--gold);font-size:0.65rem;">$${item.value}</div>
+                        `;
+                        div.onclick = () => {
+                            if (document.getElementById('upgrade').classList.contains('active')) {
+                                game.upgrade.selectItem(item);
+                            }
+                        };
+                        grid.appendChild(div);
+                    });
+                }
+            },
+
+            // ===== UPGRADE =====
+            upgrade: {
+                selectedItem: null,
+                targetItem: null,
+                upgrading: false,
+
+                init() {
+                    game.cases.updateInventoryDisplay();
+                },
+
+                selectItem(item) {
+                    this.selectedItem = item;
+                    
+                    const fromSlot = document.getElementById('upgradeFrom');
+                    fromSlot.innerHTML = `
+                        <div style="font-size:2rem;">${item.icon}</div>
+                        <div style="font-size:0.9rem;">${item.name}</div>
+                        <div style="color:var(--gold);font-size:0.8rem;">$${item.value}</div>
+                    `;
+                    fromSlot.classList.add('filled');
+
+                    // Generate target item (worth 1.5x - 2x more)
+                    const targetValue = Math.floor(item.value * (1.5 + Math.random() * 0.5));
+                    const rarities = ['uncommon', 'rare', 'legendary'];
+                    const icons = ['🗡️', '⚔️', '🐉', '💎', '💚', '🐲', '⚡'];
+                    
+                    this.targetItem = {
+                        name: `Upgraded ${item.name}`,
+                        value: targetValue,
+                        rarity: rarities[Math.min(2, Math.floor(targetValue / 300))],
+                        icon: icons[Math.floor(Math.random() * icons.length)]
+                    };
+
+                    const toSlot = document.getElementById('upgradeTo');
+                    toSlot.innerHTML = `
+                        <div style="font-size:2rem;">${this.targetItem.icon}</div>
+                        <div style="font-size:0.9rem;">${this.targetItem.name}</div>
+                        <div style="color:var(--gold);font-size:0.8rem;">$${this.targetItem.value}</div>
+                    `;
+
+                    // Calculate chance (higher value items have lower chance)
+                    const chance = Math.max(20, Math.min(80, 100 - (targetValue / item.value - 1) * 50));
+                    document.getElementById('upgradeChance').innerHTML = `
+                        <div style="font-size:1.2rem;color:var(--cyan);">Success Chance: ${chance.toFixed(1)}%</div>
+                    `;
+
+                    document.getElementById('upgradeBtn').disabled = false;
+                    document.getElementById('upgradeStatus').className = 'status-message info';
+                    document.getElementById('upgradeStatus').textContent = 'Ready to upgrade!';
+                },
+
+                attempt() {
+                    if (this.upgrading || !this.selectedItem || !this.targetItem) return;
+
+                    this.upgrading = true;
+                    const chance = Math.max(20, Math.min(80, 100 - (this.targetItem.value / this.selectedItem.value - 1) * 50));
+                    const success = Math.random() * 100 < chance;
+
+                    document.getElementById('upgradeBtn').disabled = true;
+                    document.getElementById('upgradeStatus').className = 'status-message info';
+                    document.getElementById('upgradeStatus').textContent = 'Upgrading...';
+
+                    setTimeout(() => {
+                        game.cases.removeFromInventory(this.selectedItem.id);
+
+                        const statusEl = document.getElementById('upgradeStatus');
+                        if (success) {
+                            game.cases.addToInventory(this.targetItem);
+                            statusEl.className = 'status-message win';
+                            statusEl.textContent = `Success! Got ${this.targetItem.name} worth $${this.targetItem.value}!`;
+                            showWinAnimation();
+                        } else {
+                            statusEl.className = 'status-message lose';
+                            statusEl.textContent = `Failed! Lost ${this.selectedItem.name}`;
+                        }
+
+                        this.reset();
+                        this.upgrading = false;
+                    }, 2000);
+                },
+
+                reset() {
+                    this.selectedItem = null;
+                    this.targetItem = null;
+                    
+                    document.getElementById('upgradeFrom').innerHTML = `
+                        <div style="font-size:2rem;">📦</div>
+                        <div style="color:var(--text-muted);">Select Item</div>
+                    `;
+                    document.getElementById('upgradeFrom').classList.remove('filled');
+                    
+                    document.getElementById('upgradeTo').innerHTML = `
+                        <div style="font-size:2rem;">❓</div>
+                        <div style="color:var(--text-muted);">Target Item</div>
+                    `;
+                    
+                    document.getElementById('upgradeChance').textContent = 'Select items to see chance';
+                    document.getElementById('upgradeBtn').disabled = true;
+                },
+
+                selectFromInventory() {
+                    document.getElementById('upgradeStatus').className = 'status-message info';
+                    document.getElementById('upgradeStatus').textContent = 'Click an item in your inventory below';
+                }
             }
         };
 
@@ -2877,6 +4249,39 @@
 
             // Initialize wheel
             game.wheel.init();
+            
+            // Initialize plinko
+            game.plinko.init();
+            
+            // Initialize ladder
+            game.ladder.init();
+            
+            // Initialize cases
+            // game.cases.init();
+            
+            // Initialize upgrade
+            // game.upgrade.init();
+
+            // Show navigation scroll hint on first visit
+            const nav = document.querySelector('nav');
+            const navWrapper = nav.querySelector('.nav-wrapper');
+            if (navWrapper.scrollWidth > nav.clientWidth) {
+                nav.classList.add('show-hint');
+                setTimeout(() => nav.classList.remove('show-hint'), 6000);
+            }
+
+            // Remove hint on first scroll
+            nav.addEventListener('scroll', () => {
+                nav.classList.remove('show-hint');
+            }, { once: true });
+
+            // Activate first game by default
+            const firstNavItem = navItems[0];
+            const firstGameScene = gameScenes[0];
+            if (firstNavItem && firstGameScene) {
+                firstNavItem.classList.add('active');
+                firstGameScene.classList.add('active');
+            }
 
             // Auto-save balance check (ensure minimum balance)
             if (DB.getBalance() <= 0) {
