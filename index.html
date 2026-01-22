@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ULTIMATE CASINO V2</title>
+    <style>
+        /* --- GLOBAL STYLES & ANIMATIONS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap');
+
+        :root {
+            --gold: #ffd700;
+            --green: #39ff14;
+            --red: #ff0033;
+            --blue: #00c3ff;
+            --bg: #0a0a0f;
+            --panel: #15151a;
+            --accent: #252530;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, var(--bg) 70%);
+            color: white;
+            font-family: 'Roboto Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            min-height: 100vh;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* Плавные переходы для всего */
+        .btn, .nav-btn, .mine-tile, .stair-btn, input {
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* --- HEADER & NAV --- */
+        header {
+            width: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            z-index: 100;
+            position: sticky; top: 0;
+        }
+
+        .logo { font-size: 1.5rem; color: var(--gold); text-shadow: 0 0 10px var(--gold); }
+        
+        .balance-box {
+            font-size: 1.2rem; color: var(--green);
+            background: #000; padding: 5px 15px; border-radius: 50px;
+            border: 2px solid var(--green);
+            box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.3);
+            animation: pulseGreen 2s infinite;
+        }
+
+        nav {
+            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+            padding: 15px; background: var(--panel); width: 100%;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn {
+            background: var(--accent); color: #aaa;
+            border: 1px solid #333; padding: 8px 12px;
+            cursor: pointer; border-radius: 8px; font-size: 0.9rem;
+        }
+        .nav-btn:hover { background: #333; color: #fff; }
+        .nav-btn.active {
+            background: var(--gold); color: #000; font-weight: bold;
+            border-color: var(--gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* --- GAME CONTAINERS --- */
+        .game-container {
+            flex: 1; width: 100%; display: flex; justify-content: center;
+            padding: 20px 0; overflow-y: auto;
+        }
+        .game-section {
+            display: none; width: 95%; max-width: 500px;
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .game-section.active {
+            display: block; opacity: 1; transform: translateY(0);
+        }
+
+        .control-panel {
+            background: var(--panel); padding: 20px; border-radius: 15px;
+            margin-top: 20px; display: flex; flex-direction: column; gap: 15px;
+            border: 1px solid #333; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .bet-controls { display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+        input[type="number"] {
+            background: #000; border: 2px solid #444; color: white;
+            padding: 12px; border-radius: 8px; width: 100px;
+            text-align: center; font-family: inherit; font-size: 1.1rem;
+        }
+        input:focus { border-color: var(--gold); outline: none; }
+
+        button.btn {
+            background: linear-gradient(to bottom, var(--green), #2aa80d);
+            color: black; border: none; padding: 15px;
+            font-size: 1.2rem; font-weight: bold; border-radius: 12px;
+            cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 5px 0 #1e7e09, 0 10px 15px rgba(0,0,0,0.4);
+            position: relative; overflow: hidden;
+        }
+        button.btn::after {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0));
+            transform: rotate(25deg); transition: none; pointer-events: none;
+        }
+        button.btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #1e7e09, 0 15px 20px rgba(0,0,0,0.5); }
+        button.btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #1e7e09; }
+        button.btn.cashout { background: linear-gradient(to bottom, var(--gold), #cba600); box-shadow: 0 5px 0 #9a7d00; }
+        button.btn.cashout:active { box-shadow: 0 2px 0 #9a7d00; }
+        button.btn:disabled { filter: grayscale(1); opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        h2 { text-align: center; color: var(--gold); margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* === KEYFRAME ANIMATIONS === */
+        @keyframes pulseGreen { 0% { box-shadow: inset 0 0 5px var(--green); } 50% { box-shadow: inset 0 0 15px var(--green); } 100% { box-shadow: inset 0 0 5px var(--green); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); opacity: 1; } 70% { transform: scale(0.9); } 100% { transform: scale(1); } }
+        @keyframes spinBlur { 0% { filter: blur(5px); transform: translateY(0); } 100% { filter: blur(5px); transform: translateY(-100px); } }
+
+        /* === GAME SPECIFIC STYLES === */
+
+        /* SLOTS */
+        .slots-window {
+            display: flex; justify-content: center; gap: 10px;
+            background: #000; padding: 20px; border-radius: 20px;
+            border: 4px solid var(--gold); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        .reel {
+            width: 80px; height: 120px; background: #fff; color: #000;
+            font-size: 60px; display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; border: 3px solid #333; overflow: hidden;
+            position: relative;
+        }
+        .reel-content { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
+        .reel.spinning .reel-content { animation: spinBlur 0.1s linear infinite; }
+
+        /* MINES */
+        .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .mine-tile {
+            aspect-ratio: 1; background: var(--accent); border-radius: 10px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; border-bottom: 4px solid #1a1a20;
+        }
+        .mine-tile:hover { background: #333; transform: translateY(-2px); }
+        .mine-tile:active { transform: translateY(2px); border-bottom-width: 1px; }
+        .mine-tile.revealed { background: #111; border-bottom: none; animation: bounceIn 0.3s; cursor: default; }
+        .mine-tile.gem { color: var(--green); text-shadow: 0 0 10px var(--green); }
+        .mine-tile.boom { color: var(--red); text-shadow: 0 0 10px var(--red); }
+        .shake-field { animation: shake 0.5s; }
+
+        /* STAIRS */
+        .stairs-container { display: flex; flex-direction: column-reverse; gap: 8px; }
+        .stair-row { display: flex; justify-content: center; gap: 10px; opacity: 0.3; transition: all 0.5s ease; }
+        .stair-row.active { opacity: 1; transform: scale(1.05); }
+        .stair-btn {
+            width: 60px; height: 45px; background: var(--accent); border: 2px solid #444;
+            border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; position: relative; overflow: hidden;
+        }
+        .stair-row.active .stair-btn { box-shadow: 0 0 15px rgba(255,215,0,0.2); border-color: var(--gold); }
+        .stair-btn.win { background: var(--green); color: #000; border-color: var(--green); animation: bounceIn 0.3s; }
+        .stair-btn.lose { background: var(--red); color: #000; border-color: var(--red); animation: shake 0.4s; }
+
+        /* ROCKET */
+        .rocket-display {
+            height: 250px; background: linear-gradient(to bottom, #1a1a2e, #000);
+            border: 2px solid #444; border-radius: 15px; position: relative;
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+        .rocket-obj {
+            font-size: 60px; position: absolute; bottom: 20px; left: 20px;
+            transition: bottom 0.1s linear, left 0.1s linear, transform 0.3s ease;
+            filter: drop-shadow(0 0 10px var(--red)); z-index: 2;
+        }
+        .crash-counter { font-size: 4rem; font-weight: bold; color: white; z-index: 10; text-shadow: 0 0 20px rgba(0,0,0,0.5); transition: color 0.3s; }
+        .crash-counter.crashed { color: var(--red); animation: shake 0.5s; }
+        .rocket-trail {
+            position: absolute; bottom: 40px; left: 45px; width: 10px; height: 0;
+            background: linear-gradient(to top, var(--red), transparent);
+            opacity: 0.7; transition: height 0.1s linear; z-index: 1;
+        }
+
+        /* === NEW GAME: PLINKO === */
+        .plinko-board {
+            background: #111; border-radius: 15px; padding: 20px 10px;
+            border: 2px solid #333; position: relative; overflow: hidden;
+        }
+        .pegs-container { margin-bottom: 20px; position: relative; height: 250px; /* Fixed height for simplicity */}
+        .peg-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .peg { width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 5px #fff; }
+        
+        .plinko-slots { display: flex; justify-content: center; gap: 5px; }
+        .plinko-slot {
+            flex: 1; padding: 10px 2px; text-align: center; font-size: 0.8rem; font-weight: bold;
+            border-radius: 5px; background: #222; border: 1px solid #444; transition: transform 0.2s;
+        }
+        .ps-low { background: var(--accent); color: #fff; }
+        .ps-med { background: #332200; color: var(--gold); border-color: var(--gold); }
+        .ps-high { background: #330000; color: var(--red); border-color: var(--red); }
+        .plinko-slot.hit { transform: scale(1.2); z-index: 2; filter: brightness(1.5); }
+
+        .plinko-ball {
+            width: 14px; height: 14px; background: var(--gold); border-radius: 50%;
+            position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px var(--gold); z-index: 10;
+            transition: top 0.1s linear, left 0.1s ease-in-out; /* Important for smoothness */
+        }
+
+        /* === NEW GAME: WHEEL === */
+        .wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto 20px; }
+        .wheel {
+            width: 100%; height: 100%; border-radius: 50%; border: 8px solid #333;
+            /* Conic gradient generated in JS based on segments */
+            transition: transform 4s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smooth easing stop */
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            transform: rotate(0deg);
+        }
+        .wheel-pointer {
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 15px solid transparent;
+            border-right: 15px solid transparent; border-top: 25px solid white;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); z-index: 10;
+        }
+        .wheel-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 40px; height: 40px; background: #333; border: 4px solid var(--gold);
+            border-radius: 50%; z-index: 5;
+        }
+        .bet-colors { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
+        .color-btn {
+            flex: 1; padding: 15px; border: none; border-radius: 10px;
+            font-weight: bold; font-size: 1.1rem; cursor: pointer; color: white;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5); transition: transform 0.2s, filter 0.2s;
+        }
+        .color-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+        .color-btn.red { background: linear-gradient(to bottom right, #ff4d4d, #cc0000); box-shadow: 0 5px 0 #990000; }
+        .color-btn.black { background: linear-gradient(to bottom right, #444, #111); box-shadow: 0 5px 0 #000; }
+        .color-btn.gold { background: linear-gradient(to bottom right, #ffd700, #b8860b); box-shadow: 0 5px 0 #9a7d00; color: #000; text-shadow: none;}
+        .color-btn.selected { outline: 3px solid white; transform: translateY(2px); box-shadow: none; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">💎 ULTIMATE V2</div>
+        <div class="balance-box">
+            $<span id="globalBalance">0</span>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-btn active" onclick="switchGame('slots', this)">🎰 СЛОТЫ</div>
+        <div class="nav-btn" onclick="switchGame('mines', this)">💣 МИНЫ</div>
+        <div class="nav-btn" onclick="switchGame('stairs', this)">🪜 СТУПЕНЬКИ</div>
+        <div class="nav-btn" onclick="switchGame('rocket', this)">🚀 РАКЕТА</div>
+        <div class="nav-btn" onclick="switchGame('plinko', this)" style="color: var(--blue)">🎱 ПЛИНКО</div>
+        <div class="nav-btn" onclick="switchGame('wheel', this)" style="color: var(--red)">🎡 КОЛЕСО</div>
+        <button onclick="addCredits()" style="background:transparent; border:1px solid #333; color:#555; cursor:pointer; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; margin-left: auto;">+$$$ REFILL</button>
+    </nav>
+
+    <div class="game-container">
+
+        <div id="game-slots" class="game-section active">
+            <h2>SUPER 777 SLOTS</h2>
+            <div class="slots-window">
+                <div class="reel" id="s-r1"><div class="reel-content">🍒</div></div>
+                <div class="reel" id="s-r2"><div class="reel-content">🍒</div></div>
+                <div class="reel" id="s-r3"><div class="reel-content">🍒</div></div>
+            </div>
+            <div class="control-panel">
+                <div style="text-align:center; font-size: 1.1rem; min-height: 1.3em;" id="slot-msg">Ставка 50$</div>
+                <button class="btn" id="slotSpinBtn" onclick="spinSlots()">КРУТИТЬ (50$)</button>
+            </div>
+        </div>
+
+        <div id="game-mines" class="game-section">
+            <h2>MINESWEEPER PRO</h2>
+            <div class="mines-grid" id="minesGrid"></div>
+            <div class="control-panel">
+                <div class="bet-controls">
+                    <label>Ставка: <input type="number" id="minesBet" value="100"></label>
+                    <label>Мины: <input type="number" id="minesCount" value="3" min="1" max="24" style="width: 60px;"></label>
+                </div>
+                <div style="text-align:center; color: #aaa;" id="mines-info">Найди алмазы 💎</div>
+                <button class="btn" id="minesStartBtn" onclick="startMines()">ИГРАТЬ</button>
+                <button class="btn cashout" id="minesCashoutBtn" onclick="cashoutMines()" style="display:none;">ЗАБРАТЬ</button>
+            </div>
+        </div>
+
+        <div id="game-stairs" class="game-section">
+            <h2>TOWER CLIMB</h2>
+            <div class="stairs-container" id="stairsGrid"></div>
+            <div class="control-panel">
+                <div class="bet-controls" style="justify-content: center;">
+                    <label>Ставка: <input type="number" id="stairsBet" value="100"></label>
+                </div>
+                <div style="text-align:center; color:#aaa;" id="stairs-msg">Поднимайся выше!</div>
+                <button class="btn" id="stairsStartBtn" onclick="startStairs()">НАЧАТЬ ВОСХОЖДЕНИЕ</button>
+                <button class="btn cashout" id="stairsCashoutBtn" onclick="cashoutStairs()" style="display:none;">ЗАБРАТЬ</button>
+            </div>
+        </div>
+
+        <div id="game-rocket" class="game-section">
+            <h2>CRASH ROCKET V2</h2>
+            <div class="rocket-display" id="rocketField">
+                <div class="rocket-trail" id="rocketTrail"></div>
+                <div class="rocket-obj" id="rocketIcon">🚀</div>
+                <div class="crash-counter" id="crashCounter">1.00x</div>
+            </div>
+            <div class="control-panel">
+                <div class="bet-controls" style="justify-content: center;">
+                    <label>Ставка: <input type="number" id="rocketBet" value="100"></label>
+                </div>
+                <button class="btn" id="rocketStartBtn" onclick="startRocket()">ЗАПУСК</button>
+                <button class="btn cashout" id="rocketCashoutBtn" onclick="cashoutRocket()" style="display:none;">ВЫПРЫГНУТЬ</button>
+            </div>
+        </div>
+
+        <div id="game-plinko" class="game-section">
+            <h2 style="color: var(--blue);">PLINKO DROP</h2>
+            <div class="plinko-board" id="plinkoBoard">
+                <div id="plinkoBall" class="plinko-ball" style="opacity:0;"></div>
+                <div class="pegs-container" id="plinkoPegs">
+                    </div>
+                <div class="plinko-slots" id="plinkoSlots">
+                    </div>
+            </div>
+            <div class="control-panel">
+                 <div class="bet-controls" style="justify-content: center;">
+                    <label>Ставка: <input type="number" id="plinkoBet" value="100"></label>
+                </div>
+                <div style="text-align:center; color:#aaa;" id="plinko-msg">Запусти шарик</div>
+                <button class="btn" id="plinkoDropBtn" onclick="dropPlinko()" style="background: linear-gradient(to bottom, var(--blue), #0088cc); box-shadow: 0 5px 0 #006699;">БРОСИТЬ ШАР</button>
+            </div>
+        </div>
+
+        <div id="game-wheel" class="game-section">
+            <h2 style="color: var(--red);">WHEEL OF FORTUNE</h2>
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <div class="wheel" id="theWheel"></div>
+                <div class="wheel-center"></div>
+            </div>
+            <div class="control-panel">
+                <div class="bet-controls" style="justify-content: center; margin-bottom: 10px;">
+                     <label>Ставка: <input type="number" id="wheelBet" value="100"></label>
+                </div>
+                <div style="text-align:center; margin-bottom: 10px; color:#aaa;" id="wheel-msg">Выберите цвет</div>
+                <div class="bet-colors">
+                    <button class="color-btn red" onclick="selectWheelColor('red', this)">КРАСНОЕ<br>x2</button>
+                    <button class="color-btn black" onclick="selectWheelColor('black', this)">ЧЕРНОЕ<br>x2</button>
+                    <button class="color-btn gold" onclick="selectWheelColor('gold', this)">ЗОЛОТО<br>x14</button>
+                </div>
+                <button class="btn" id="wheelSpinBtn" onclick="spinWheel()" disabled style="background: linear-gradient(to bottom, #ff6600, #cc5200); box-shadow: 0 5px 0 #993d00;">ВРАЩАТЬ КОЛЕСО</button>
+            </div>
+        </div>
+
+    </div> <script>
+        /* --- CORE SYSTEM --- */
+        let balance = parseInt(localStorage.getItem('casinoBalanceV2')) || 5000;
+        const balanceEl = document.getElementById('globalBalance');
+        const sSymbols = ['🍒','🍋','🍇','💎','7️⃣','🔔'];
+
+        // Звуковые эффекты (опционально, заглушки)
+        const sounds = {
+            click: () => {},
+            win: () => {},
+            lose: () => {},
+            spin: () => {}
+        };
+        
+        function updateBalance(amount) {
+            balance += amount;
+            balance = Math.floor(balance);
+            localStorage.setItem('casinoBalanceV2', balance);
+            // Анимация счетчика
+            let start = parseInt(balanceEl.innerText);
+            let end = balance;
+            let duration = 500;
+            let startTime = null;
+            function animateCounter(currentTime) {
+                if (!startTime) startTime = currentTime;
+                let progress = (currentTime - startTime) / duration;
+                if (progress > 1) progress = 1;
+                balanceEl.innerText = Math.floor(start + (end - start) * progress);
+                if (progress < 1) requestAnimationFrame(animateCounter);
+                else balanceEl.innerText = balance; // Ensure final value
+            }
+            requestAnimationFrame(animateCounter);
+        }
+        
+        updateBalance(0); // Init
+
+        function addCredits() {
+            if(confirm("Сбросить прогресс и получить 5000$?")) {
+                balance = 5000; updateBalance(0); window.location.reload();
+            }
+        }
+
+        function switchGame(gameId, btnEl) {
+            document.querySelectorAll('.game-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('game-' + gameId).classList.add('active');
+            btnEl.classList.add('active');
+        }
+        
+        function lockControls(lock) {
+             document.querySelectorAll('button.btn:not(.cashout), input, .nav-btn').forEach(el => {
+                 el.disabled = lock;
+                 if(lock) el.style.pointerEvents = 'none'; else el.style.pointerEvents = 'all';
+             });
+        }
+
+
+        /* --- GAME 1: SLOTS LOGIC (SMOOTHER) --- */
+        function spinSlots() {
+            if(balance < 50) return alert("Недостаточно средств!");
+            updateBalance(-50);
+            lockControls(true);
+            
+            const reels = [document.getElementById('s-r1'), document.getElementById('s-r2'), document.getElementById('s-r3')];
+            const msg = document.getElementById('slot-msg');
+            msg.innerText = "Удачи..."; msg.style.color = "#aaa";
+
+            reels.forEach(r => r.classList.add('spinning'));
+
+            // Stop reels one by one with delay
+            let results = [];
+            [0, 1, 2].forEach((idx) => {
+                setTimeout(() => {
+                    reels[idx].classList.remove('spinning');
+                    const sym = sSymbols[Math.floor(Math.random()*sSymbols.length)];
+                    reels[idx].querySelector('.reel-content').innerText = sym;
+                    // Bounce effect
+                    reels[idx].animate([{transform: 'translateY(0)'}, {transform: 'translateY(-20px)'}, {transform: 'translateY(0)'}], {duration: 200});
+                    results.push(sym);
+                    if(idx === 2) checkSlotWin(results);
+                }, 1000 + (idx * 500));
+            });
+        }
+
+        function checkSlotWin(res) {
+            lockControls(false);
+            const msg = document.getElementById('slot-msg');
+            let win = 0;
+            if(res[0] == res[1] && res[1] == res[2]) {
+                if(res[0] == '7️⃣') win = 2500;
+                else if(res[0] == '💎') win = 1000;
+                else win = 250;
+            } else if(res[0] == res[1] || res[1] == res[2] || res[0] == res[2]) {
+                win = 25;
+            }
+
+            if(win > 0) {
+                updateBalance(win);
+                msg.innerText = `🔥 ВЫИГРЫШ: ${win}$ 🔥`;
+                msg.style.color = 'var(--green)';
+                msg.animate([{transform: 'scale(1)'}, {transform: 'scale(1.2)'}, {transform: 'scale(1)'}], 300);
+            } else {
+                msg.innerText = "Попробуй еще раз";
+            }
+        }
+
+        /* --- GAME 2: MINES LOGIC (ANIMATED) --- */
+        let minesActive = false; let minesData = []; let minesBetVal = 0; let tilesRevealed = 0; let totalMines = 3;
+
+        function startMines() {
+            if(minesActive) return;
+            const bet = parseInt(document.getElementById('minesBet').value);
+            const count = parseInt(document.getElementById('minesCount').value);
+            if(isNaN(bet) || bet <= 0 || bet > balance) return alert("Некорректная ставка");
+            if(count < 1 || count > 24) return alert("Мин от 1 до 24");
+
+            updateBalance(-bet);
+            minesBetVal = bet; totalMines = count; tilesRevealed = 0; minesActive = true;
+            lockControls(true);
+
+            const grid = document.getElementById('minesGrid');
+            grid.innerHTML = ''; grid.classList.remove('shake-field');
+            
+            minesData = Array(25).fill(0);
+            let placed = 0;
+            while(placed < count) {
+                let idx = Math.floor(Math.random() * 25);
+                if(minesData[idx] === 0) { minesData[idx] = 1; placed++; }
+            }
+
+            for(let i=0; i<25; i++) {
+                let tile = document.createElement('div');
+                tile.className = 'mine-tile';
+                tile.onclick = () => clickMine(i, tile);
+                // Staggered appearance
+                tile.style.opacity = 0; tile.style.transform = 'scale(0.8)';
+                grid.appendChild(tile);
+                setTimeout(() => { tile.style.opacity = 1; tile.style.transform = 'scale(1)'; }, i * 20);
+            }
+
+            document.getElementById('minesStartBtn').style.display = 'none';
+            document.getElementById('minesCashoutBtn').style.display = 'inline-block';
+            document.getElementById('mines-info').innerText = `В игре: ${bet}$`;
+            document.getElementById('mines-info').style.color = '#aaa';
+        }
+
+        function clickMine(idx, el) {
+            if(!minesActive || el.classList.contains('revealed')) return;
+            el.classList.add('revealed');
+
+            if(minesData[idx] === 1) {
+                el.innerText = '💣'; el.classList.add('boom');
+                document.getElementById('minesGrid').classList.add('shake-field');
+                minesGameOver(false);
+            } else {
+                el.innerText = '💎'; el.classList.add('gem');
+                tilesRevealed++;
+                let multiplier = 1;
+                for(let i=0; i<tilesRevealed; i++) multiplier *= (25 - i) / (25 - totalMines - i);
+                let currentWin = Math.floor(minesBetVal * multiplier);
+                document.getElementById('minesCashoutBtn').innerText = `ЗАБРАТЬ ${currentWin}$`;
+                document.getElementById('mines-info').innerText = `Кэф: x${multiplier.toFixed(2)}`;
+                document.getElementById('mines-info').style.color = 'var(--green)';
+            }
+        }
+
+        function cashoutMines() {
+            if(!minesActive) return;
+            let multiplier = 1;
+            for(let i=0; i<tilesRevealed; i++) multiplier *= (25 - i) / (25 - totalMines - i);
+            let win = Math.floor(minesBetVal * multiplier);
+            updateBalance(win);
+            minesGameOver(true);
+        }
+
+        function minesGameOver(won) {
+            minesActive = false; lockControls(false);
+            document.getElementById('minesStartBtn').style.display = 'inline-block';
+            document.getElementById('minesCashoutBtn').style.display = 'none';
+            
+            const tiles = document.getElementById('minesGrid').children;
+            for(let i=0; i<25; i++) {
+                if(minesData[i] === 1 && !tiles[i].classList.contains('revealed')) {
+                    setTimeout(() => {
+                        tiles[i].classList.add('revealed'); tiles[i].innerText = '💣'; tiles[i].style.opacity = '0.5';
+                    }, i*10);
+                }
+            }
+            document.getElementById('mines-info').innerText = won ? "ПОБЕДА!" : "ВЗРЫВ!";
+             document.getElementById('mines-info').style.color = won ? 'var(--green)' : 'var(--red)';
+        }
+
+        /* --- GAME 3: STAIRS LOGIC (SMOOTHER) --- */
+        let stairsActive = false; let stairsLevel = 0; let stairsBetVal = 0;
+        const STAIR_ROWS = 8;
+
+        function startStairs() {
+            if(stairsActive) return;
+            const bet = parseInt(document.getElementById('stairsBet').value);
+            if(isNaN(bet) || bet <= 0 || bet > balance) return alert("Некорректная ставка");
+
+            updateBalance(-bet);
+            stairsBetVal = bet; stairsLevel = 0; stairsActive = true;
+            lockControls(true);
+
+            const container = document.getElementById('stairsGrid');
+            container.innerHTML = '';
+
+            for(let r=0; r<STAIR_ROWS; r++) {
+                let row = document.createElement('div');
+                row.className = 'stair-row';
+                if(r === 0) row.classList.add('active');
+                let bombPos = Math.floor(Math.random() * 3);
+                for(let b=0; b<3; b++) {
+                    let btn = document.createElement('div');
+                    btn.className = 'stair-btn'; btn.innerText = '❓';
+                    btn.onclick = () => clickStair(r, b, bombPos, btn, row);
+                    row.appendChild(btn);
+                }
+                container.appendChild(row);
+            }
+            document.getElementById('stairsStartBtn').style.display = 'none';
+            document.getElementById('stairsCashoutBtn').style.display = 'inline-block';
+            document.getElementById('stairsCashoutBtn').innerText = "ЗАБРАТЬ";
+            document.getElementById('stairs-msg').innerText = "Уровень 1";
+        }
+
+        function clickStair(rowIdx, btnIdx, bombPos, btnEl, rowEl) {
+            if(!stairsActive || rowIdx !== stairsLevel || btnEl.classList.contains('revealed')) return;
+            btnEl.classList.add('revealed');
+
+            if(btnIdx === bombPos) {
+                btnEl.innerText = '🗿'; btnEl.classList.add('lose');
+                stairsGameOver(false);
+            } else {
+                btnEl.innerText = '💰'; btnEl.classList.add('win');
+                stairsLevel++;
+                let multi = Math.pow(1.4, stairsLevel); // x1.4 per step
+                let val = Math.floor(stairsBetVal * multi);
+                document.getElementById('stairsCashoutBtn').innerText = `ЗАБРАТЬ ${val}$`;
+                document.getElementById('stairs-msg').innerText = `Уровень ${stairsLevel+1} (x${multi.toFixed(2)})`;
+
+                rowEl.classList.remove('active');
+                const rows = document.getElementById('stairsGrid').children;
+                if(stairsLevel < STAIR_ROWS) {
+                    rows[rows.length - 1 - stairsLevel].classList.add('active');
+                } else { cashoutStairs(); }
+            }
+        }
+
+        function cashoutStairs() {
+            if(!stairsActive) return;
+            let multi = stairsLevel === 0 ? 0 : Math.pow(1.4, stairsLevel);
+            let win = Math.floor(stairsBetVal * multi);
+            if(win > 0) updateBalance(win);
+            stairsGameOver(true);
+        }
+
+        function stairsGameOver(won) {
+            stairsActive = false; lockControls(false);
+            document.getElementById('stairsStartBtn').style.display = 'inline-block';
+            document.getElementById('stairsCashoutBtn').style.display = 'none';
+            document.getElementById('stairs-msg').innerText = won ? `Забрал!` : `Упал с башни!`;
+            document.querySelectorAll('.stair-row.active').forEach(r => r.classList.remove('active'));
+        }
+
+
+        /* --- GAME 4: ROCKET LOGIC (SMOOTHER FLIGHT) --- */
+        let rocketInterval; let rocketMulti = 1.00; let rocketFlying = false; let rocketBetVal = 0;
+
+        function startRocket() {
+            if(rocketFlying) return;
+            const bet = parseInt(document.getElementById('rocketBet').value);
+            if(isNaN(bet) || bet <= 0 || bet > balance) return alert("Ставка?");
+            
+            updateBalance(-bet);
+            rocketBetVal = bet; rocketFlying = true; rocketMulti = 1.00;
+            lockControls(true);
+
+            const r = Math.random();
+            const crashPoint = Math.max(1.00, (0.98 / (1 - r))); // Adjusted algorithm
+            
+            document.getElementById('rocketStartBtn').style.display = 'none';
+            document.getElementById('rocketCashoutBtn').style.display = 'inline-block';
+            document.getElementById('rocketCashoutBtn').innerText = "ВЫПРЫГНУТЬ";
+            
+            const counter = document.getElementById('crashCounter');
+            const rocket = document.getElementById('rocketIcon');
+            const trail = document.getElementById('rocketTrail');
+            const field = document.getElementById('rocketField');
+            
+            counter.classList.remove('crashed'); counter.style.color = "white";
+            field.classList.remove('shake-field');
+
+            let startTime = Date.now();
+            rocketInterval = setInterval(() => {
+                let elapsed = (Date.now() - startTime) / 1000;
+                rocketMulti = 1.00 + Math.pow(elapsed, 1.5) * 0.1; // Exponential growth
+
+                counter.innerText = rocketMulti.toFixed(2) + 'x';
+                
+                // Smooth movement using CSS transitions + JS coordinate calc
+                let percentage = Math.min((rocketMulti - 1) * 8, 90);
+                rocket.style.bottom = (20 + percentage) + '%';
+                rocket.style.left = (20 + (percentage/1.8)) + '%';
+                rocket.style.transform = `rotate(${percentage/2}deg)`;
+                trail.style.height = percentage + '%';
+                trail.style.bottom = (40 + percentage/3) + '%'; trail.style.left = (45 + percentage/1.8) + '%';
+
+                if(rocketMulti >= crashPoint) { crashRocket(crashPoint); }
+            }, 30); // Faster interval for smoother appearance
+        }
+
+        function cashoutRocket() {
+            if(!rocketFlying) return;
+            clearInterval(rocketInterval); rocketFlying = false;
+            let win = Math.floor(rocketBetVal * rocketMulti);
+            updateBalance(win);
+            document.getElementById('crashCounter').style.color = 'var(--green)';
+            document.getElementById('crashCounter').innerText = "WIN: " + rocketMulti.toFixed(2) + 'x';
+            endRocketRound();
+        }
+
+        function crashRocket(val) {
+            clearInterval(rocketInterval); rocketFlying = false;
+            document.getElementById('crashCounter').classList.add('crashed');
+            document.getElementById('crashCounter').innerText = "CRASH @ " + val.toFixed(2) + 'x';
+            document.getElementById('rocketIcon').innerText = '💥';
+            document.getElementById('rocketField').classList.add('shake-field');
+            endRocketRound();
+        }
+
+        function endRocketRound() {
+            lockControls(false);
+            document.getElementById('rocketStartBtn').style.display = 'inline-block';
+            document.getElementById('rocketCashoutBtn').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('rocketIcon').innerText = '🚀';
+                document.getElementById('rocketIcon').style.bottom = '20px';
+                document.getElementById('rocketIcon').style.left = '20px';
+                document.getElementById('rocketIcon').style.transform = 'rotate(0deg)';
+                document.getElementById('rocketTrail').style.height = '0';
+            }, 1000);
+        }
+
+        /* --- GAME 5: PLINKO LOGIC (DOM ANIMATION) --- */
+        const plinkoRows = 10;
+        const plinkoMultipliers = [10, 5, 2, 1, 0.5, 0.2, 0.5, 1, 2, 5, 10];
+        let plinkoBusy = false;
+
+        // Init Plinko Board
+        const pPegs = document.getElementById('plinkoPegs');
+        const pSlots = document.getElementById('plinkoSlots');
+        for(let i=0; i<plinkoRows; i++) {
+            let row = document.createElement('div'); row.className = 'peg-row';
+            for(let j=0; j<=i+2; j++) { row.appendChild(document.createElement('div')).className='peg'; }
+            pPegs.appendChild(row);
+        }
+        plinkoMultipliers.forEach(m => {
+            let s = document.createElement('div'); s.className = 'plinko-slot ' + (m>=5?'ps-high':m>=1?'ps-med':'ps-low'); s.innerText = 'x'+m;
+            pSlots.appendChild(s);
+        });
+
+        function dropPlinko() {
+            if(plinkoBusy) return;
+            const bet = parseInt(document.getElementById('plinkoBet').value);
+            if(isNaN(bet) || bet <= 0 || bet > balance) return alert("Ставка?");
+            updateBalance(-bet);
+            plinkoBusy = true; lockControls(true);
+            document.getElementById('plinkoDropBtn').disabled = true;
+            document.querySelectorAll('.plinko-slot').forEach(s => s.classList.remove('hit'));
+
+            const ball = document.getElementById('plinkoBall');
+            ball.style.opacity = 1;
+            // Initial position relative to board container
+            let startX = pPegs.offsetWidth / 2;
+            let startY = 10;
+            ball.style.left = startX + 'px';
+            ball.style.top = startY + 'px';
+
+            let currentRow = 0;
+            let currentXIndex = 0; // 0 is center relative to row
+
+            // Animation Interval
+            const dropInterval = setInterval(() => {
+                currentRow++;
+                // Random direction: -1 (left) or +1 (right)
+                let dir = Math.random() > 0.5 ? 1 : -1;
+                currentXIndex += dir;
+
+                // Calculate new visual position
+                // Row height approx 25px. Peg spacing approx 25px.
+                let newY = startY + (currentRow * 22);
+                // X offset depends on the row width which grows. Simplified calc:
+                let rowOffset = (currentRow * 12.5); // Half peg spacing shift per row
+                let newX = startX - rowOffset + ((currentRow + currentXIndex) * 12.5); // Tricky math for triangle grid
+
+                ball.style.top = newY + 'px';
+                ball.style.left = newX + 'px';
+                
+                // End reached
+                if(currentRow === plinkoRows) {
+                    clearInterval(dropInterval);
+                    // Map final X index to slot index.
+                    // Range of currentXIndex is [-10 to +10]. Slots are 0 to 10.
+                    // Shift index range: [-rows to +rows] -> [0 to rows*2]? No, slots count is rows+1
+                    // Final position is roughly `(currentXIndex + rows) / 2` ?
+                    // Let's use visual hit detection or simpler math.
+                    // Simpler math based on final grid position:
+                    let slotIndex = Math.floor((currentXIndex + plinkoRows) / 2);
+                    // Clamp just in case
+                    slotIndex = Math.max(0, Math.min(plinkoMultipliers.length-1, slotIndex));
+                    
+                    let multi = plinkoMultipliers[slotIndex];
+                    let win = Math.floor(bet * multi);
+                    updateBalance(win);
+
+                    // Visual hit
+                    pSlots.children[slotIndex].classList.add('hit');
+                    document.getElementById('plinko-msg').innerText = `Выпало x${multi}! Выигрыш: ${win}$`;
+
+                    setTimeout(() => {
+                        ball.style.opacity = 0;
+                        plinkoBusy = false; lockControls(false);
+                        document.getElementById('plinkoDropBtn').disabled = false;
+                    }, 1000);
+                }
+            }, 150); // Speed of drop steps
+        }
+
+        /* --- GAME 6: WHEEL LOGIC (SMOOTHER CSS SPIN) --- */
+        let wheelSpinning = false;
+        let selectedColor = null;
+        // Segments: 1 gold, 7 red, 7 black. Total 15.
+        const wheelSegments = [
+            'gold', 'black', 'red', 'black', 'red', 'black', 'red', 'black', 'red',
+            'black', 'red', 'black', 'red', 'black', 'red'
+        ];
+        // Generate Conic Gradient
+        let grad = 'conic-gradient(';
+        let step = 360 / 15;
+        for(let i=0; i<15; i++) {
+            let c = wheelSegments[i] === 'gold' ? '#ffd700' : (wheelSegments[i] === 'red' ? '#cc0000' : '#111');
+            grad += `${c} ${i*step}deg ${(i+1)*step}deg,`;
+        }
+        grad = grad.slice(0, -1) + ')';
+        document.getElementById('theWheel').style.background = grad;
+
+        function selectWheelColor(col, btn) {
+            if(wheelSpinning) return;
+            selectedColor = col;
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            document.getElementById('wheelSpinBtn').disabled = false;
+        }
+
+        function spinWheel() {
+            if(wheelSpinning || !selectedColor) return;
+            const bet = parseInt(document.getElementById('wheelBet').value);
+            if(isNaN(bet) || bet <= 0 || bet > balance) return alert("Ставка?");
+            updateBalance(-bet);
+            wheelSpinning = true; lockControls(true);
+            document.getElementById('wheelSpinBtn').disabled = true;
+            document.getElementById('wheel-msg').innerText = "Вращаем...";
+
+            const wheel = document.getElementById('theWheel');
+            // Decide Winner Index beforehand
+            const winIndex = Math.floor(Math.random() * 15);
+            const winColor = wheelSegments[winIndex];
+            
+            // Calculate rotation angle. Need to land in the middle of the segment.
+            // Segment angle is step=24deg. Center is (index + 0.5) * step.
+            // Pointer is at top (0deg). Wheel rotates clockwise. To land index N under pointer,
+            // we must rotate negative degrees.
+            // Target angle = 360 - ((winIndex + 0.5) * step)
+            let targetAngle = 360 - ((winIndex + 0.5) * step);
+            // Add extra spins for effect
+            let totalRotation = 360 * 5 + targetAngle;
+            
+            // Reset before new spin if needed (to prevent endless numbers)
+            wheel.style.transition = 'none';
+            wheel.style.transform = 'rotate(0deg)';
+            // Force reflow
+            wheel.offsetHeight;
+            
+            // Start Spin animation
+            wheel.style.transition = 'transform 4s cubic-bezier(0.2, 0.8, 0.2, 1)'; // Smooth ease-out
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+
+            // Listen for end of spin
+            wheel.ontransitionend = () => {
+                wheel.ontransitionend = null;
+                let multi = 0;
+                if(winColor === selectedColor) {
+                    multi = winColor === 'gold' ? 14 : 2;
+                }
+                let win = bet * multi;
+                if(win > 0) updateBalance(win);
+
+                let msg = document.getElementById('wheel-msg');
+                if(multi > 0) {
+                    msg.innerText = `Выпал ${winColor.toUpperCase()}! Выигрыш: ${win}$`;
+                    msg.style.color = winColor === 'gold' ? var(--gold) : winColor === 'red' ? var(--red) : 'white';
+                } else {
+                    msg.innerText = `Выпал ${winColor.toUpperCase()}. Не повезло.`;
+                    msg.style.color = '#aaa';
+                }
+
+                wheelSpinning = false; lockControls(false);
+                document.getElementById('wheelSpinBtn').disabled = false;
+            };
+        }
+
+    </script>
+</body>
+</html>
+
