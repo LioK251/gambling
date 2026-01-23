@@ -3,773 +3,136 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Магазин Coca-Cola</title>
-  <style>
-    :root {
-      --red: #d62b2b;
-      --dark: #1b1b1b;
-      --light: #f6f6f6;
-      --line: #ececec;
-      --green: #2d8a4c;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--light);
-      color: var(--dark);
-    }
-
-    header {
-      background: linear-gradient(90deg, #d62b2b, #b91d1d);
-      color: #fff;
-      padding: 16px 20px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    header .top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .logo {
-      font-weight: 800;
-      letter-spacing: 1px;
-      font-size: 22px;
-    }
-
-    .tagline {
-      font-size: 12px;
-      opacity: 0.9;
-    }
-
-    .cart-mini {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      white-space: nowrap;
-    }
-
-    .layout {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      display: grid;
-      grid-template-columns: 260px 1fr 320px;
-      gap: 20px;
-    }
-
-    .panel {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
-    }
-
-    .filters h2,
-    .cart h2,
-    .admin h2 {
-      margin: 0 0 12px;
-      font-size: 18px;
-    }
-
-    .filter-block {
-      margin-bottom: 14px;
-    }
-
-    .filter-block h3 {
-      margin: 0 0 8px;
-      font-size: 14px;
-      color: #444;
-    }
-
-    .check {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 6px 0;
-      font-size: 13px;
-      color: #444;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      font-size: 13px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .btn {
-      padding: 10px 12px;
-      border: none;
-      border-radius: 10px;
-      background: var(--red);
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .btn.ghost {
-      background: #f0f0f0;
-      color: #444;
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .main .topline {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      font-size: 13px;
-      color: #555;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
-    }
-
-    .card {
-      background: #fff;
-      border: 1px solid #eee;
-      border-radius: 16px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 220px;
-    }
-
-    .card .badge {
-      display: inline-block;
-      background: #ffe8e8;
-      color: #b21d1d;
-      padding: 4px 8px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .card .name {
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .card .meta {
-      font-size: 12px;
-      color: #666;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .card .price {
-      font-size: 16px;
-      font-weight: 800;
-      color: #111;
-    }
-
-    .card .old {
-      text-decoration: line-through;
-      color: #999;
-      font-size: 13px;
-      margin-right: 6px;
-    }
-
-    .card .stock {
-      font-size: 12px;
-      color: var(--green);
-    }
-
-    .card .stock.out {
-      color: #c0392b;
-    }
-
-    .card .actions {
-      margin-top: auto;
-      display: flex;
-      gap: 8px;
-    }
-
-    .cart-list {
-      min-height: 60px;
-    }
-
-    .cart-item {
-      border: 1px dashed #ddd;
-      border-radius: 12px;
-      padding: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .cart-item .ci-name {
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .cart-item .ci-meta {
-      font-size: 12px;
-      color: #777;
-    }
-
-    .cart-item .ci-controls {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .cart-item .ci-controls button {
-      padding: 6px 8px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      background: #fafafa;
-      cursor: pointer;
-    }
-
-    .cart-total {
-      border-top: 1px solid #eee;
-      padding-top: 10px;
-      font-size: 13px;
-      color: #444;
-    }
-
-    .cart-total .line {
-      display: flex;
-      justify-content: space-between;
-      margin: 6px 0;
-    }
-
-    .cart-total .total {
-      font-weight: 800;
-      font-size: 15px;
-      color: #111;
-    }
-
-    .admin {
-      max-width: 1200px;
-      margin: 0 auto 40px;
-      padding: 0 20px;
-    }
-
-    .admin .panel {
-      margin-top: 16px;
-    }
-
-    .admin-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .admin-block label {
-      display: block;
-      font-size: 13px;
-      margin: 6px 0;
-      color: #444;
-    }
-
-    .category-discounts .cat-line {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin: 6px 0;
-      font-size: 13px;
-    }
-
-    .category-discounts .cat-line input {
-      width: 90px;
-    }
-
-    .admin-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-
-    .note {
-      font-size: 12px;
-      color: #666;
-    }
-
-    .footer {
-      text-align: center;
-      padding: 20px;
-      color: #888;
-      font-size: 12px;
-    }
-
-    @media (max-width: 1000px) {
-      .layout { grid-template-columns: 1fr; }
-      .admin-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  <title>жумапель малубулул</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
-  <header>
-    <div class="top">
-      <div>
-        <div class="logo">Coca-Cola shop</div>
-        <div class="tagline">обычный магазинчик, без пафоса</div>
-      </div>
-      <div class="cart-mini">В корзине: <span id="mini-count">0</span> шт • <span id="mini-total">0 ₽</span></div>
+  <header class="site-header">
+    <div class="brand">
+      <div class="logo">жумапель малубулул</div>
+      <div class="tagline">магазинчик кока-колы без пафоса</div>
     </div>
+    <div class="mini-cart">Корзина: <span id="mini-count">0</span> шт • <span id="mini-total">0 ₽</span></div>
   </header>
 
-  <div class="layout">
-    <aside class="filters panel">
-      <h2>Фильтры</h2>
-      <div class="filter-block">
-        <input id="search" type="text" placeholder="поиск по названию">
-      </div>
-      <div class="filter-block">
-        <h3>Категории</h3>
-        <div id="category-list"></div>
-      </div>
-      <div class="filter-block">
-        <h3>Тип</h3>
-        <div id="sugar-list"></div>
-      </div>
-      <div class="filter-block">
-        <h3>Цена, ₽</h3>
-        <div class="row">
-          <input id="min-price" type="number" placeholder="от">
-          <input id="max-price" type="number" placeholder="до">
-        </div>
-      </div>
-      <div class="filter-block">
-        <h3>Объем, л</h3>
-        <div class="row">
-          <input id="min-volume" type="number" step="0.01" placeholder="от">
-          <input id="max-volume" type="number" step="0.01" placeholder="до">
-        </div>
-      </div>
-      <label class="check"><input id="in-stock" type="checkbox">только в наличии</label>
-      <div class="filter-block">
-        <h3>Сортировка</h3>
-        <select id="sort">
-          <option value="default">как есть</option>
-          <option value="price-asc">цена ↑</option>
-          <option value="price-desc">цена ↓</option>
-          <option value="volume-asc">объем ↑</option>
-          <option value="volume-desc">объем ↓</option>
-          <option value="name-asc">название А-Я</option>
-        </select>
-      </div>
-      <button class="btn ghost" id="reset-filters">Сбросить</button>
-    </aside>
+  <nav class="site-nav">
+    <button class="nav-link active" data-page="home">Главная</button>
+    <button class="nav-link" data-page="catalog">Каталог</button>
+    <button class="nav-link" data-page="cart">Корзина</button>
+    <button class="nav-link" data-page="panel">Панель</button>
+  </nav>
 
-    <main class="main">
-      <div class="topline">
-        <div id="count-info">Показано 0</div>
-        <div>Кола и все рядом с ней</div>
-      </div>
-      <div id="product-list" class="grid"></div>
-    </main>
-
-    <aside class="cart panel">
-      <h2>Корзина</h2>
-      <div id="cart-list" class="cart-list"></div>
-      <div class="cart-total">
-        <div class="line"><span>Сумма без скидок</span><span id="cart-subtotal">0 ₽</span></div>
-        <div class="line"><span>Скидки по товарам</span><span id="cart-item-discount">0 ₽</span></div>
-        <div class="line"><span>Скидка от суммы</span><span id="cart-cart-discount">0 ₽</span></div>
-        <div class="line total"><span>Итого</span><span id="cart-total">0 ₽</span></div>
-      </div>
-      <button class="btn ghost" id="clear-cart">Очистить</button>
-    </aside>
-  </div>
-
-  <section class="admin">
-    <div class="panel">
-      <h2>Админка скидок</h2>
-      <div class="admin-grid">
-        <div class="admin-block">
-          <label>Общая скидка на все, %</label>
-          <input id="global-discount" type="number" min="0" max="60">
-          <label>Скидка от суммы, если корзина от, ₽</label>
-          <input id="cart-threshold" type="number" min="0">
-          <label>Процент скидки от суммы</label>
-          <input id="cart-percent" type="number" min="0" max="30">
-        </div>
-        <div class="admin-block">
-          <div class="note" style="margin-bottom: 6px;">Скидки по категориям</div>
-          <div id="category-discounts" class="category-discounts"></div>
+  <main class="content">
+    <section id="page-home" class="page active">
+      <div class="hero panel">
+        <h1>Добро пожаловать</h1>
+        <p>Тут обычный интернет-магазин Coca-Cola. Можно выбрать вкус, объем, собрать корзину и посмотреть скидки.</p>
+        <div class="hero-actions">
+          <button class="btn" data-jump="catalog">Перейти в каталог</button>
+          <button class="btn ghost" data-jump="panel">Глянуть скидки</button>
         </div>
       </div>
-      <div class="admin-actions">
-        <button class="btn" id="save-discounts">Сохранить</button>
-        <button class="btn ghost" id="reset-discounts">Сбросить</button>
-        <div class="note">Максимум 60% на товар. Изменения сохраняются в браузере.</div>
+      <div class="panel" style="margin-top:16px;">
+        <h2 style="margin:0 0 12px;">Категории</h2>
+        <div id="home-categories" class="category-cards"></div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <section id="page-catalog" class="page">
+      <div class="catalog-layout">
+        <aside class="filters panel">
+          <h2>Фильтры</h2>
+          <div class="filter-block">
+            <input id="search" type="text" placeholder="поиск по названию">
+          </div>
+          <div class="filter-block">
+            <h3>Категории</h3>
+            <div id="category-list"></div>
+          </div>
+          <div class="filter-block">
+            <h3>Тип</h3>
+            <div id="sugar-list"></div>
+          </div>
+          <div class="filter-block">
+            <h3>Цена, ₽</h3>
+            <div class="row">
+              <input id="min-price" type="number" placeholder="от">
+              <input id="max-price" type="number" placeholder="до">
+            </div>
+          </div>
+          <div class="filter-block">
+            <h3>Объем, л</h3>
+            <div class="row">
+              <input id="min-volume" type="number" step="0.01" placeholder="от">
+              <input id="max-volume" type="number" step="0.01" placeholder="до">
+            </div>
+          </div>
+          <label class="check"><input id="in-stock" type="checkbox">только в наличии</label>
+          <div class="filter-block">
+            <h3>Сортировка</h3>
+            <select id="sort">
+              <option value="default">как есть</option>
+              <option value="price-asc">цена ↑</option>
+              <option value="price-desc">цена ↓</option>
+              <option value="volume-asc">объем ↑</option>
+              <option value="volume-desc">объем ↓</option>
+              <option value="name-asc">название А-Я</option>
+            </select>
+          </div>
+          <button class="btn ghost" id="reset-filters">Сбросить</button>
+        </aside>
+
+        <div class="catalog-main">
+          <div class="topline">
+            <div id="count-info">Показано 0</div>
+            <div>Кола и все рядом с ней</div>
+          </div>
+          <div id="product-list" class="grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-cart" class="page">
+      <div class="panel cart">
+        <h2>Корзина</h2>
+        <div id="cart-list" class="cart-list"></div>
+        <div class="cart-total">
+          <div class="line"><span>Сумма без скидок</span><span id="cart-subtotal">0 ₽</span></div>
+          <div class="line"><span>Скидки по товарам</span><span id="cart-item-discount">0 ₽</span></div>
+          <div class="line"><span>Скидка от суммы</span><span id="cart-cart-discount">0 ₽</span></div>
+          <div class="line total"><span>Итого</span><span id="cart-total">0 ₽</span></div>
+        </div>
+        <button class="btn ghost" id="clear-cart">Очистить</button>
+      </div>
+    </section>
+
+    <section id="page-panel" class="page">
+      <div class="panel admin">
+        <h2>Панель скидок</h2>
+        <div class="admin-grid">
+          <div class="admin-block">
+            <label>Общая скидка на все, %</label>
+            <input id="global-discount" type="number" min="0" max="60">
+            <label>Скидка от суммы, если корзина от, ₽</label>
+            <input id="cart-threshold" type="number" min="0">
+            <label>Процент скидки от суммы</label>
+            <input id="cart-percent" type="number" min="0" max="30">
+          </div>
+          <div class="admin-block">
+            <div class="note" style="margin-bottom: 6px;">Скидки по категориям</div>
+            <div id="category-discounts" class="category-discounts"></div>
+          </div>
+        </div>
+        <div class="admin-actions">
+          <button class="btn" id="save-discounts">Сохранить</button>
+          <button class="btn ghost" id="reset-discounts">Сбросить</button>
+          <div class="note">Максимум 60% на товар. Все сохраняется в браузере.</div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <div class="footer">Сделано просто и по делу</div>
-
-  <script>
-    const products = [
-      { id: "c05", name: "Coca-Cola Classic 0.5 л", category: "Classic", volume: 0.5, sugar: "с сахаром", price: 70, stock: 12, pack: "бутылка" },
-      { id: "c10", name: "Coca-Cola Classic 1 л", category: "Classic", volume: 1, sugar: "с сахаром", price: 110, stock: 20, pack: "бутылка" },
-      { id: "c20", name: "Coca-Cola Classic 2 л", category: "Classic", volume: 2, sugar: "с сахаром", price: 170, stock: 8, pack: "бутылка" },
-      { id: "c033", name: "Coca-Cola Classic 0.33 л", category: "Classic", volume: 0.33, sugar: "с сахаром", price: 55, stock: 30, pack: "банка" },
-      { id: "z05", name: "Coca-Cola Zero 0.5 л", category: "Zero", volume: 0.5, sugar: "без сахара", price: 75, stock: 15, pack: "бутылка" },
-      { id: "z10", name: "Coca-Cola Zero 1 л", category: "Zero", volume: 1, sugar: "без сахара", price: 120, stock: 10, pack: "бутылка" },
-      { id: "z033", name: "Coca-Cola Zero 0.33 л", category: "Zero", volume: 0.33, sugar: "без сахара", price: 60, stock: 25, pack: "банка" },
-      { id: "ch05", name: "Coca-Cola Cherry 0.5 л", category: "Cherry", volume: 0.5, sugar: "с сахаром", price: 85, stock: 6, pack: "бутылка" },
-      { id: "en025", name: "Coca-Cola Energy 0.25 л", category: "Energy", volume: 0.25, sugar: "с сахаром", price: 90, stock: 9, pack: "банка" },
-      { id: "mix6", name: "Набор микс 6 банок", category: "Наборы", volume: 2, sugar: "разное", price: 320, stock: 5, pack: "набор" },
-      { id: "mix12", name: "Набор микс 12 банок", category: "Наборы", volume: 4, sugar: "разное", price: 590, stock: 3, pack: "набор" },
-      { id: "cup", name: "Стакан Coca-Cola", category: "Аксессуары", volume: 0, sugar: "нет", price: 150, stock: 12, pack: "аксессуар" },
-      { id: "cap", name: "Кепка Coca-Cola", category: "Аксессуары", volume: 0, sugar: "нет", price: 420, stock: 4, pack: "аксессуар" },
-      { id: "mag", name: "Магнитик Coca-Cola", category: "Аксессуары", volume: 0, sugar: "нет", price: 60, stock: 40, pack: "аксессуар" }
-    ];
-
-    const categories = Array.from(new Set(products.map(p => p.category)));
-    const sugarTypes = Array.from(new Set(products.map(p => p.sugar)));
-
-    const cart = JSON.parse(localStorage.getItem("cola_cart") || "{}");
-
-    const defaultDiscounts = {
-      global: 0,
-      cartThreshold: 1200,
-      cartPercent: 5,
-      categories: {}
-    };
-
-    function getDiscounts() {
-      const stored = JSON.parse(localStorage.getItem("cola_discounts") || "null");
-      const base = JSON.parse(JSON.stringify(defaultDiscounts));
-      categories.forEach(c => base.categories[c] = 0);
-      if (stored) {
-        if (typeof stored.global === "number") base.global = stored.global;
-        if (typeof stored.cartThreshold === "number") base.cartThreshold = stored.cartThreshold;
-        if (typeof stored.cartPercent === "number") base.cartPercent = stored.cartPercent;
-        if (stored.categories) {
-          categories.forEach(c => {
-            if (typeof stored.categories[c] === "number") base.categories[c] = stored.categories[c];
-          });
-        }
-      }
-      return base;
-    }
-
-    let discounts = getDiscounts();
-
-    const categoryListEl = document.getElementById("category-list");
-    const sugarListEl = document.getElementById("sugar-list");
-    const productListEl = document.getElementById("product-list");
-    const cartListEl = document.getElementById("cart-list");
-
-    function formatPrice(value) {
-      return new Intl.NumberFormat("ru-RU").format(Math.round(value)) + " ₽";
-    }
-
-    function clamp(value, min, max) {
-      return Math.min(max, Math.max(min, value));
-    }
-
-    function itemDiscountPercent(product) {
-      const base = (discounts.global || 0) + (discounts.categories[product.category] || 0);
-      return clamp(base, 0, 60);
-    }
-
-    function itemPrice(product) {
-      const disc = itemDiscountPercent(product);
-      const price = Math.round(product.price * (1 - disc / 100));
-      return { price, disc };
-    }
-
-    function buildFilters() {
-      categoryListEl.innerHTML = categories.map(c => {
-        return '<label class="check"><input type="checkbox" value="' + c + '" checked> ' + c + "</label>";
-      }).join("");
-      sugarListEl.innerHTML = sugarTypes.map(s => {
-        return '<label class="check"><input type="checkbox" value="' + s + '" checked> ' + s + "</label>";
-      }).join("");
-    }
-
-    function getFilterState() {
-      const selectedCategories = Array.from(categoryListEl.querySelectorAll("input:checked")).map(i => i.value);
-      const selectedSugar = Array.from(sugarListEl.querySelectorAll("input:checked")).map(i => i.value);
-      return {
-        search: document.getElementById("search").value.trim().toLowerCase(),
-        categories: selectedCategories,
-        sugar: selectedSugar,
-        minPrice: parseFloat(document.getElementById("min-price").value) || 0,
-        maxPrice: parseFloat(document.getElementById("max-price").value) || 0,
-        minVolume: parseFloat(document.getElementById("min-volume").value) || 0,
-        maxVolume: parseFloat(document.getElementById("max-volume").value) || 0,
-        inStock: document.getElementById("in-stock").checked,
-        sort: document.getElementById("sort").value
-      };
-    }
-
-    function applyFilters(list, f) {
-      let res = list.filter(p => {
-        const matchSearch = p.name.toLowerCase().includes(f.search);
-        const matchCategory = f.categories.length ? f.categories.includes(p.category) : true;
-        const matchSugar = f.sugar.length ? f.sugar.includes(p.sugar) : true;
-        const matchPriceMin = f.minPrice ? p.price >= f.minPrice : true;
-        const matchPriceMax = f.maxPrice ? p.price <= f.maxPrice : true;
-        const matchVolumeMin = f.minVolume ? p.volume >= f.minVolume : true;
-        const matchVolumeMax = f.maxVolume ? p.volume <= f.maxVolume : true;
-        const matchStock = f.inStock ? p.stock > 0 : true;
-        return matchSearch && matchCategory && matchSugar && matchPriceMin && matchPriceMax && matchVolumeMin && matchVolumeMax && matchStock;
-      });
-
-      if (f.sort === "price-asc") res.sort((a, b) => a.price - b.price);
-      if (f.sort === "price-desc") res.sort((a, b) => b.price - a.price);
-      if (f.sort === "volume-asc") res.sort((a, b) => a.volume - b.volume);
-      if (f.sort === "volume-desc") res.sort((a, b) => b.volume - a.volume);
-      if (f.sort === "name-asc") res.sort((a, b) => a.name.localeCompare(b.name, "ru"));
-
-      return res;
-    }
-
-    function renderProducts() {
-      const f = getFilterState();
-      const filtered = applyFilters(products, f);
-
-      document.getElementById("count-info").textContent = "Показано " + filtered.length + " из " + products.length;
-
-      productListEl.innerHTML = filtered.map(p => {
-        const priceInfo = itemPrice(p);
-        const hasDiscount = priceInfo.disc > 0;
-        const out = p.stock <= 0;
-        return `
-          <div class="card">
-            <div class="badge">${p.category}</div>
-            <div class="name">${p.name}</div>
-            <div class="meta">
-              <span>${p.pack}</span>
-              <span>${p.volume ? p.volume + " л" : "без объема"}</span>
-              <span>${p.sugar}</span>
-            </div>
-            <div class="price">
-              ${hasDiscount ? '<span class="old">' + formatPrice(p.price) + '</span>' : ''}
-              <span>${formatPrice(priceInfo.price)}</span>
-            </div>
-            <div class="stock ${out ? "out" : ""}">${out ? "нет в наличии" : "в наличии: " + p.stock}</div>
-            <div class="actions">
-              <button class="btn" data-add="${p.id}" ${out ? "disabled" : ""}>В корзину</button>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function saveCart() {
-      localStorage.setItem("cola_cart", JSON.stringify(cart));
-    }
-
-    function updateMiniCart(totals) {
-      document.getElementById("mini-count").textContent = totals.count;
-      document.getElementById("mini-total").textContent = formatPrice(totals.total);
-    }
-
-    function calcTotals() {
-      let baseTotal = 0;
-      let discountedTotal = 0;
-      let count = 0;
-
-      Object.keys(cart).forEach(id => {
-        const product = products.find(p => p.id === id);
-        if (!product) return;
-        const qty = cart[id];
-        const priceInfo = itemPrice(product);
-        baseTotal += product.price * qty;
-        discountedTotal += priceInfo.price * qty;
-        count += qty;
-      });
-
-      const itemDiscount = Math.max(0, baseTotal - discountedTotal);
-      let cartDiscount = 0;
-
-      if (discounts.cartThreshold > 0 && discountedTotal >= discounts.cartThreshold && discounts.cartPercent > 0) {
-        cartDiscount = Math.round(discountedTotal * discounts.cartPercent / 100);
-      }
-
-      const total = Math.max(0, discountedTotal - cartDiscount);
-
-      return { baseTotal, discountedTotal, itemDiscount, cartDiscount, total, count };
-    }
-
-    function renderCart() {
-      const items = Object.keys(cart).map(id => {
-        const product = products.find(p => p.id === id);
-        if (!product) return null;
-        const qty = cart[id];
-        const priceInfo = itemPrice(product);
-        return { product, qty, priceInfo };
-      }).filter(Boolean);
-
-      if (!items.length) {
-        cartListEl.innerHTML = "<div class='note'>Корзина пустая</div>";
-      } else {
-        cartListEl.innerHTML = items.map(item => {
-          const p = item.product;
-          const qty = item.qty;
-          const linePrice = item.priceInfo.price * qty;
-          return `
-            <div class="cart-item">
-              <div class="ci-name">${p.name}</div>
-              <div class="ci-meta">${p.pack} • ${p.volume ? p.volume + " л" : "без объема"} • ${formatPrice(item.priceInfo.price)} / шт</div>
-              <div class="ci-controls">
-                <button data-action="dec" data-id="${p.id}">-</button>
-                <span>${qty}</span>
-                <button data-action="inc" data-id="${p.id}">+</button>
-                <button data-action="remove" data-id="${p.id}">убрать</button>
-                <span style="margin-left: auto; font-weight: 700;">${formatPrice(linePrice)}</span>
-              </div>
-            </div>
-          `;
-        }).join("");
-      }
-
-      const totals = calcTotals();
-      document.getElementById("cart-subtotal").textContent = formatPrice(totals.baseTotal);
-      document.getElementById("cart-item-discount").textContent = "-" + formatPrice(totals.itemDiscount);
-      document.getElementById("cart-cart-discount").textContent = "-" + formatPrice(totals.cartDiscount);
-      document.getElementById("cart-total").textContent = formatPrice(totals.total);
-      updateMiniCart(totals);
-    }
-
-    function addToCart(id) {
-      cart[id] = (cart[id] || 0) + 1;
-      saveCart();
-      renderCart();
-    }
-
-    function changeQty(id, delta) {
-      if (!cart[id]) return;
-      cart[id] += delta;
-      if (cart[id] <= 0) delete cart[id];
-      saveCart();
-      renderCart();
-    }
-
-    function removeItem(id) {
-      delete cart[id];
-      saveCart();
-      renderCart();
-    }
-
-    function initAdminPanel() {
-      document.getElementById("global-discount").value = discounts.global;
-      document.getElementById("cart-threshold").value = discounts.cartThreshold;
-      document.getElementById("cart-percent").value = discounts.cartPercent;
-
-      const container = document.getElementById("category-discounts");
-      container.innerHTML = categories.map(c => {
-        return `
-          <div class="cat-line">
-            <span>${c}</span>
-            <input type="number" min="0" max="60" data-cat="${c}" value="${discounts.categories[c] || 0}">
-          </div>
-        `;
-      }).join("");
-    }
-
-    function saveDiscounts() {
-      discounts.global = clamp(parseFloat(document.getElementById("global-discount").value) || 0, 0, 60);
-      discounts.cartThreshold = Math.max(0, parseFloat(document.getElementById("cart-threshold").value) || 0);
-      discounts.cartPercent = clamp(parseFloat(document.getElementById("cart-percent").value) || 0, 0, 30);
-
-      document.querySelectorAll("#category-discounts input").forEach(input => {
-        const cat = input.dataset.cat;
-        discounts.categories[cat] = clamp(parseFloat(input.value) || 0, 0, 60);
-      });
-
-      localStorage.setItem("cola_discounts", JSON.stringify(discounts));
-      renderProducts();
-      renderCart();
-    }
-
-    function resetDiscounts() {
-      localStorage.removeItem("cola_discounts");
-      discounts = getDiscounts();
-      initAdminPanel();
-      renderProducts();
-      renderCart();
-    }
-
-    buildFilters();
-    renderProducts();
-    renderCart();
-    initAdminPanel();
-
-    document.getElementById("product-list").addEventListener("click", e => {
-      const btn = e.target.closest("[data-add]");
-      if (btn) addToCart(btn.dataset.add);
-    });
-
-    cartListEl.addEventListener("click", e => {
-      const action = e.target.dataset.action;
-      const id = e.target.dataset.id;
-      if (!action || !id) return;
-      if (action === "inc") changeQty(id, 1);
-      if (action === "dec") changeQty(id, -1);
-      if (action === "remove") removeItem(id);
-    });
-
-    document.querySelectorAll(".filters input, .filters select").forEach(el => {
-      el.addEventListener("input", renderProducts);
-      el.addEventListener("change", renderProducts);
-    });
-
-    document.getElementById("reset-filters").addEventListener("click", () => {
-      document.getElementById("search").value = "";
-      document.getElementById("min-price").value = "";
-      document.getElementById("max-price").value = "";
-      document.getElementById("min-volume").value = "";
-      document.getElementById("max-volume").value = "";
-      document.getElementById("in-stock").checked = false;
-      document.getElementById("sort").value = "default";
-      categoryListEl.querySelectorAll("input").forEach(i => i.checked = true);
-      sugarListEl.querySelectorAll("input").forEach(i => i.checked = true);
-      renderProducts();
-    });
-
-    document.getElementById("clear-cart").addEventListener("click", () => {
-      Object.keys(cart).forEach(k => delete cart[k]);
-      saveCart();
-      renderCart();
-    });
-
-    document.getElementById("save-discounts").addEventListener("click", saveDiscounts);
-    document.getElementById("reset-discounts").addEventListener("click", resetDiscounts);
-  </script>
 </body>
 </html>
