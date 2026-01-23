@@ -1,883 +1,775 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ROYAL CASINO V3</title>
-    <style>
-        /* --- GLOBAL & THEME --- */
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Roboto+Mono:wght@500&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Магазин Coca-Cola</title>
+  <style>
+    :root {
+      --red: #d62b2b;
+      --dark: #1b1b1b;
+      --light: #f6f6f6;
+      --line: #ececec;
+      --green: #2d8a4c;
+    }
 
-        :root {
-            --bg-dark: #0b0b0f;
-            --bg-panel: #14141a;
-            --gold: #ffcc00;
-            --gold-glow: #ffcc0088;
-            --green: #00ff66;
-            --red: #ff3333;
-            --blue: #00ccff;
-            --purple: #9933ff;
-            --text-main: #ffffff;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-        }
+    * { box-sizing: border-box; }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--light);
+      color: var(--dark);
+    }
 
-        body {
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255, 204, 0, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(153, 51, 255, 0.05) 0%, transparent 20%);
-            color: var(--text-main);
-            font-family: 'Montserrat', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-            user-select: none;
-        }
+    header {
+      background: linear-gradient(90deg, #d62b2b, #b91d1d);
+      color: #fff;
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-        /* --- UI COMPONENTS --- */
-        
-        /* Плавность для всего */
-        .anim-fast { transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .anim-slow { transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    header .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-        /* Header */
-        header {
-            width: 100%;
-            padding: 15px 20px;
-            background: rgba(11, 11, 15, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--gold);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 5px 30px rgba(0,0,0,0.5);
-        }
+    .logo {
+      font-weight: 800;
+      letter-spacing: 1px;
+      font-size: 22px;
+    }
 
-        .logo {
-            font-size: 1.4rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--gold), #fff, var(--gold));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    .tagline {
+      font-size: 12px;
+      opacity: 0.9;
+    }
 
-        .balance-pill {
-            background: rgba(0, 255, 102, 0.1);
-            border: 1px solid var(--green);
-            color: var(--green);
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-family: 'Roboto Mono', monospace;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
-            transition: transform 0.2s;
-        }
-        .balance-pill:active { transform: scale(0.95); }
+    .cart-mini {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
 
-        /* Navigation */
-        nav {
-            display: flex;
-            gap: 8px;
-            padding: 15px 10px;
-            overflow-x: auto;
-            width: 100%;
-            max-width: 600px;
-            justify-content: flex-start; /* scrollable on mobile */
-            scrollbar-width: none;
-        }
-        nav::-webkit-scrollbar { display: none; }
+    .layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 260px 1fr 320px;
+      gap: 20px;
+    }
 
-        .nav-item {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            color: #888;
-            padding: 10px 16px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.3s ease;
-        }
-        .nav-item:hover { background: #222; color: #fff; }
-        .nav-item.active {
-            background: var(--gold);
-            color: #000;
-            border-color: var(--gold);
-            box-shadow: 0 0 15px var(--gold-glow);
-            transform: translateY(-2px);
-        }
+    .panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+    }
 
-        /* Game Container */
-        .game-wrapper {
-            flex: 1;
-            width: 100%;
-            max-width: 500px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    .filters h2,
+    .cart h2,
+    .admin h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
 
-        .game-scene {
-            display: none;
-            width: 100%;
-            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .game-scene.active { display: block; }
+    .filter-block {
+      margin-bottom: 14px;
+    }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
+    .filter-block h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #444;
+    }
 
-        /* Control Panel */
-        .panel {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      font-size: 13px;
+      color: #444;
+    }
 
-        .bet-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            background: #000;
-            padding: 5px;
-            border-radius: 12px;
-            border: 1px solid #333;
-        }
-        
-        input[type="number"] {
-            background: transparent;
-            border: none;
-            color: white;
-            font-family: 'Roboto Mono', monospace;
-            font-size: 1.2rem;
-            width: 100px;
-            text-align: center;
-            outline: none;
-        }
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 13px;
+    }
 
-        button.action-btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--green), #00cc52);
-            color: #000;
-            font-weight: 900;
-            font-size: 1.1rem;
-            padding: 18px;
-            border: none;
-            border-radius: 14px;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: 0 10px 20px rgba(0, 255, 102, 0.2);
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        button.action-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 30px rgba(0, 255, 102, 0.4); }
-        button.action-btn:active { transform: translateY(2px) scale(0.98); }
-        button.action-btn:disabled { filter: grayscale(1) opacity(0.5); transform: none; cursor: not-allowed; }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
 
-        button.cashout { background: linear-gradient(135deg, var(--gold), #ffaa00); box-shadow: 0 10px 20px rgba(255, 204, 0, 0.3); }
+    .btn {
+      padding: 10px 12px;
+      border: none;
+      border-radius: 10px;
+      background: var(--red);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-        /* === GAME SPECIFICS === */
+    .btn.ghost {
+      background: #f0f0f0;
+      color: #444;
+    }
 
-        /* 1. SLOTS */
-        .slots-frame {
-            background: #000;
-            border: 3px solid var(--gold);
-            border-radius: 15px;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 20px rgba(255,204,0,0.2);
-        }
-        .reel-col {
-            width: 85px; height: 110px;
-            background: #f0f0f0;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
-        .reel-tape {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3rem;
-        }
-        .blur-anim {
-            animation: blurScroll 0.2s infinite linear;
-            background: linear-gradient(to bottom, #ddd 0%, #fff 50%, #ddd 100%);
-            color: transparent;
-            text-shadow: 0 0 15px rgba(0,0,0,0.5);
-        }
-        @keyframes blurScroll { 0% { background-position: 0 0; } 100% { background-position: 0 100px; } }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-        /* 2. MINES (3D FLIP) */
-        .mines-grid {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
-            perspective: 800px; /* For 3D flip */
-        }
-        .tile-wrapper {
-            aspect-ratio: 1;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.4s;
-            cursor: pointer;
-        }
-        .tile-wrapper.flipped { transform: rotateY(180deg); cursor: default; }
-        .tile-front, .tile-back {
-            position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden;
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; font-weight: bold;
-        }
-        .tile-front { background: #2a2a35; border-bottom: 4px solid #1a1a20; transition: background 0.2s; }
-        .tile-front:hover { background: #3a3a45; }
-        .tile-back { transform: rotateY(180deg); background: #111; box-shadow: inset 0 0 10px #000; }
-        .tile-back.gem { background: rgba(0,255,102,0.1); border: 2px solid var(--green); text-shadow: 0 0 10px var(--green); }
-        .tile-back.boom { background: rgba(255,51,51,0.2); border: 2px solid var(--red); }
+    .main .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #555;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-        /* 3. STAIRS */
-        .stairs-field { display: flex; flex-direction: column-reverse; gap: 6px; }
-        .s-row { display: flex; gap: 8px; justify-content: center; opacity: 0.3; transition: 0.3s; }
-        .s-row.active { opacity: 1; transform: scale(1.02); }
-        .s-btn {
-            flex: 1; height: 40px; background: #2a2a35;
-            border: 1px solid #444; border-radius: 6px;
-            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
-        }
-        .s-btn:hover { background: #3a3a45; }
-        .s-btn.win { background: var(--green); color: #000; box-shadow: 0 0 15px var(--green); border-color: transparent; }
-        .s-btn.lose { background: var(--red); opacity: 0.8; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
 
-        /* 4. ROCKET */
-        .rocket-area {
-            height: 220px; background: linear-gradient(to bottom, #0b0b0f, #1a1a2e);
-            border: 1px solid #333; border-radius: 15px;
-            position: relative; overflow: hidden;
-        }
-        .rocket-ship {
-            font-size: 40px; position: absolute; bottom: 10px; left: 10px;
-            transition: bottom 0.1s linear, left 0.1s linear; /* Smooth programmatic movement */
-            z-index: 5; filter: drop-shadow(0 0 10px orange);
-        }
-        .rocket-val {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 4rem; font-weight: 900; color: rgba(255,255,255,0.1);
-            z-index: 1;
-        }
+    .card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 220px;
+    }
 
-        /* 5. PLINKO (HARDCORE) */
-        .plinko-box {
-            background: #0f0f13; border: 2px solid #333;
-            border-radius: 15px; padding: 15px 5px;
-            position: relative; overflow: hidden;
-            display: flex; flex-direction: column; align-items: center;
-        }
-        .peg-layer { margin-bottom: 5px; position: relative; }
-        .plinko-row { display: flex; justify-content: center; gap: 24px; margin-bottom: 18px; } /* Adjusted spacing */
-        .peg {
-            width: 6px; height: 6px; background: #fff; border-radius: 50%;
-            box-shadow: 0 0 4px rgba(255,255,255,0.5);
-        }
-        .bucket-layer { display: flex; gap: 4px; justify-content: center; width: 100%; padding: 0 10px; }
-        .bucket {
-            flex: 1; height: 30px; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.65rem; font-weight: bold; color: #fff;
-            position: relative; transition: transform 0.1s;
-        }
-        /* Gradient Colors for buckets: Red (Edge) -> Yellow -> Green/Blue (Center) -> Red */
-        .bucket.hit { transform: scale(1.3) translateY(-5px); z-index: 10; filter: brightness(1.5); }
-        
-        .p-ball {
-            width: 10px; height: 10px; background: var(--gold);
-            border-radius: 50%; position: absolute; top: 0; left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 8px var(--gold);
-            will-change: top, left;
-            z-index: 20;
-        }
+    .card .badge {
+      display: inline-block;
+      background: #ffe8e8;
+      color: #b21d1d;
+      padding: 4px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
 
-        /* 6. WHEEL */
-        .wheel-wrap { position: relative; width: 280px; height: 280px; margin: 0 auto; }
-        .the-wheel {
-            width: 100%; height: 100%; border-radius: 50%; border: 6px solid #222;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            transition: transform 5s cubic-bezier(0.1, 0.9, 0.2, 1);
-        }
-        .wheel-arrow {
-            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-            width: 30px; height: 40px; background: #fff;
-            clip-path: polygon(50% 100%, 0 0, 100% 0);
-            z-index: 5; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
-        }
+    .card .name {
+      font-size: 16px;
+      font-weight: 700;
+    }
 
-        /* Color Buttons */
-        .color-pick { display: flex; gap: 10px; margin-bottom: 15px; }
-        .cp-btn {
-            flex: 1; padding: 12px; border: 2px solid transparent; border-radius: 10px;
-            font-weight: bold; cursor: pointer; color: white; transition: 0.2s;
-        }
-        .cp-btn.sel { border-color: #fff; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .cp-red { background: var(--red); }
-        .cp-black { background: #333; }
-        .cp-gold { background: var(--gold); color: black; }
+    .card .meta {
+      font-size: 12px;
+      color: #666;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-    </style>
+    .card .price {
+      font-size: 16px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    .card .old {
+      text-decoration: line-through;
+      color: #999;
+      font-size: 13px;
+      margin-right: 6px;
+    }
+
+    .card .stock {
+      font-size: 12px;
+      color: var(--green);
+    }
+
+    .card .stock.out {
+      color: #c0392b;
+    }
+
+    .card .actions {
+      margin-top: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    .cart-list {
+      min-height: 60px;
+    }
+
+    .cart-item {
+      border: 1px dashed #ddd;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cart-item .ci-name {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .cart-item .ci-meta {
+      font-size: 12px;
+      color: #777;
+    }
+
+    .cart-item .ci-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .cart-item .ci-controls button {
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #fafafa;
+      cursor: pointer;
+    }
+
+    .cart-total {
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+      font-size: 13px;
+      color: #444;
+    }
+
+    .cart-total .line {
+      display: flex;
+      justify-content: space-between;
+      margin: 6px 0;
+    }
+
+    .cart-total .total {
+      font-weight: 800;
+      font-size: 15px;
+      color: #111;
+    }
+
+    .admin {
+      max-width: 1200px;
+      margin: 0 auto 40px;
+      padding: 0 20px;
+    }
+
+    .admin .panel {
+      margin-top: 16px;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .admin-block label {
+      display: block;
+      font-size: 13px;
+      margin: 6px 0;
+      color: #444;
+    }
+
+    .category-discounts .cat-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 6px 0;
+      font-size: 13px;
+    }
+
+    .category-discounts .cat-line input {
+      width: 90px;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .note {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+      font-size: 12px;
+    }
+
+    @media (max-width: 1000px) {
+      .layout { grid-template-columns: 1fr; }
+      .admin-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-
-    <header>
-        <div class="logo">ROYAL<span style="color:white">V3</span></div>
-        <div class="balance-pill">
-            <span>$</span><span id="balanceDisplay">0</span>
-        </div>
-    </header>
-
-    <nav>
-        <div class="nav-item active" onclick="setGame('slots', this)">🎰 SLOTS</div>
-        <div class="nav-item" onclick="setGame('mines', this)">💣 MINES</div>
-        <div class="nav-item" onclick="setGame('stairs', this)">🪜 TOWER</div>
-        <div class="nav-item" onclick="setGame('rocket', this)">🚀 CRASH</div>
-        <div class="nav-item" onclick="setGame('plinko', this)">🎱 PLINKO</div>
-        <div class="nav-item" onclick="setGame('wheel', this)">🎡 WHEEL</div>
-        <div class="nav-item" style="margin-left:auto; color: #555" onclick="resetGame()">♻️ RESET</div>
-    </nav>
-
-    <div class="game-wrapper">
-
-        <div id="g-slots" class="game-scene active">
-            <div class="slots-frame">
-                <div class="reel-col"><div class="reel-tape" id="r1">7</div></div>
-                <div class="reel-col"><div class="reel-tape" id="r2">7</div></div>
-                <div class="reel-col"><div class="reel-tape" id="r3">7</div></div>
-            </div>
-            <div class="panel">
-                <div style="text-align: center; color: #888; margin-bottom: 10px; min-height: 24px;" id="slot-msg">Джекпот: x500</div>
-                <button class="action-btn" id="btn-slots" onclick="spinSlots()">КРУТИТЬ (50$)</button>
-            </div>
-        </div>
-
-        <div id="g-mines" class="game-scene">
-            <div class="mines-grid" id="mines-grid">
-                </div>
-            <div class="panel">
-                <div class="bet-row">
-                    <span style="color:#888; padding-left:10px;">Ставка</span>
-                    <input type="number" id="mines-bet" value="100">
-                </div>
-                <div class="bet-row">
-                    <span style="color:#888; padding-left:10px;">Мины (1-24)</span>
-                    <input type="number" id="mines-count" value="3" max="24">
-                </div>
-                <div id="mines-status" style="text-align:center; margin-bottom:10px; color:#aaa;">Ищем алмазы...</div>
-                <button class="action-btn" id="btn-mines-start" onclick="startMines()">ИГРАТЬ</button>
-                <button class="action-btn cashout" id="btn-mines-out" onclick="cashoutMines()" style="display:none">ЗАБРАТЬ</button>
-            </div>
-        </div>
-
-        <div id="g-stairs" class="game-scene">
-            <div class="stairs-field" id="stairs-field">
-                </div>
-            <div class="panel">
-                <div class="bet-row">
-                    <span style="color:#888; padding-left:10px;">Ставка</span>
-                    <input type="number" id="stairs-bet" value="100">
-                </div>
-                <button class="action-btn" id="btn-stairs-start" onclick="startStairs()">НАЧАТЬ</button>
-                <button class="action-btn cashout" id="btn-stairs-out" onclick="cashoutStairs()" style="display:none">ЗАБРАТЬ</button>
-            </div>
-        </div>
-
-        <div id="g-rocket" class="game-scene">
-            <div class="rocket-area" id="rocket-area">
-                <div class="rocket-val" id="rocket-txt">1.00x</div>
-                <div class="rocket-ship" id="rocket-icon">🚀</div>
-            </div>
-            <div class="panel">
-                <div class="bet-row">
-                    <span style="color:#888; padding-left:10px;">Ставка</span>
-                    <input type="number" id="rocket-bet" value="100">
-                </div>
-                <button class="action-btn" id="btn-rocket-start" onclick="startRocket()">ЗАПУСК</button>
-                <button class="action-btn cashout" id="btn-rocket-out" onclick="cashoutRocket()" style="display:none">ПРЫГАТЬ</button>
-            </div>
-        </div>
-
-        <div id="g-plinko" class="game-scene">
-            <div class="plinko-box">
-                <div id="p-balls-layer" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
-                <div id="p-pegs" class="peg-layer"></div>
-                <div id="p-buckets" class="bucket-layer"></div>
-            </div>
-            <div class="panel">
-                <div class="bet-row">
-                    <span style="color:#888; padding-left:10px;">Ставка</span>
-                    <input type="number" id="plinko-bet" value="50">
-                </div>
-                <button class="action-btn" id="btn-plinko" onclick="dropPlinko()" style="background: var(--blue); color:white;">БРОСИТЬ ШАР</button>
-            </div>
-        </div>
-
-        <div id="g-wheel" class="game-scene">
-            <div class="wheel-wrap">
-                <div class="wheel-arrow"></div>
-                <div class="the-wheel" id="wheel-el"></div>
-            </div>
-            <div class="panel">
-                <div class="color-pick">
-                    <div class="cp-btn cp-red" onclick="pickWheelColor('red', this)">x2</div>
-                    <div class="cp-btn cp-black" onclick="pickWheelColor('black', this)">x2</div>
-                    <div class="cp-btn cp-gold" onclick="pickWheelColor('gold', this)">x14</div>
-                </div>
-                <div class="bet-row">
-                    <span style="color:#888; padding-left:10px;">Ставка</span>
-                    <input type="number" id="wheel-bet" value="100">
-                </div>
-                <button class="action-btn" id="btn-wheel" onclick="spinWheel()" disabled>ВРАЩАТЬ</button>
-            </div>
-        </div>
-
+  <header>
+    <div class="top">
+      <div>
+        <div class="logo">Coca-Cola shop</div>
+        <div class="tagline">обычный магазинчик, без пафоса</div>
+      </div>
+      <div class="cart-mini">В корзине: <span id="mini-count">0</span> шт • <span id="mini-total">0 ₽</span></div>
     </div>
+  </header>
 
-    <script>
-        /* --- CORE SYSTEM --- */
-        let balance = parseInt(localStorage.getItem('rv3_bal')) || 2500;
-        const balEl = document.getElementById('balanceDisplay');
-        
-        function updateBal(amount) {
-            let old = balance;
-            balance += amount;
-            balance = Math.floor(balance);
-            localStorage.setItem('rv3_bal', balance);
-            
-            // Smooth counter
-            let diff = balance - old;
-            let steps = 20;
-            let stepVal = diff / steps;
-            let cur = old;
-            let i = 0;
-            let int = setInterval(() => {
-                cur += stepVal;
-                i++;
-                balEl.innerText = Math.floor(cur);
-                if(i >= steps) {
-                    clearInterval(int);
-                    balEl.innerText = balance;
-                }
-            }, 20);
+  <div class="layout">
+    <aside class="filters panel">
+      <h2>Фильтры</h2>
+      <div class="filter-block">
+        <input id="search" type="text" placeholder="поиск по названию">
+      </div>
+      <div class="filter-block">
+        <h3>Категории</h3>
+        <div id="category-list"></div>
+      </div>
+      <div class="filter-block">
+        <h3>Тип</h3>
+        <div id="sugar-list"></div>
+      </div>
+      <div class="filter-block">
+        <h3>Цена, ₽</h3>
+        <div class="row">
+          <input id="min-price" type="number" placeholder="от">
+          <input id="max-price" type="number" placeholder="до">
+        </div>
+      </div>
+      <div class="filter-block">
+        <h3>Объем, л</h3>
+        <div class="row">
+          <input id="min-volume" type="number" step="0.01" placeholder="от">
+          <input id="max-volume" type="number" step="0.01" placeholder="до">
+        </div>
+      </div>
+      <label class="check"><input id="in-stock" type="checkbox">только в наличии</label>
+      <div class="filter-block">
+        <h3>Сортировка</h3>
+        <select id="sort">
+          <option value="default">как есть</option>
+          <option value="price-asc">цена ↑</option>
+          <option value="price-desc">цена ↓</option>
+          <option value="volume-asc">объем ↑</option>
+          <option value="volume-desc">объем ↓</option>
+          <option value="name-asc">название А-Я</option>
+        </select>
+      </div>
+      <button class="btn ghost" id="reset-filters">Сбросить</button>
+    </aside>
+
+    <main class="main">
+      <div class="topline">
+        <div id="count-info">Показано 0</div>
+        <div>Кола и все рядом с ней</div>
+      </div>
+      <div id="product-list" class="grid"></div>
+    </main>
+
+    <aside class="cart panel">
+      <h2>Корзина</h2>
+      <div id="cart-list" class="cart-list"></div>
+      <div class="cart-total">
+        <div class="line"><span>Сумма без скидок</span><span id="cart-subtotal">0 ₽</span></div>
+        <div class="line"><span>Скидки по товарам</span><span id="cart-item-discount">0 ₽</span></div>
+        <div class="line"><span>Скидка от суммы</span><span id="cart-cart-discount">0 ₽</span></div>
+        <div class="line total"><span>Итого</span><span id="cart-total">0 ₽</span></div>
+      </div>
+      <button class="btn ghost" id="clear-cart">Очистить</button>
+    </aside>
+  </div>
+
+  <section class="admin">
+    <div class="panel">
+      <h2>Админка скидок</h2>
+      <div class="admin-grid">
+        <div class="admin-block">
+          <label>Общая скидка на все, %</label>
+          <input id="global-discount" type="number" min="0" max="60">
+          <label>Скидка от суммы, если корзина от, ₽</label>
+          <input id="cart-threshold" type="number" min="0">
+          <label>Процент скидки от суммы</label>
+          <input id="cart-percent" type="number" min="0" max="30">
+        </div>
+        <div class="admin-block">
+          <div class="note" style="margin-bottom: 6px;">Скидки по категориям</div>
+          <div id="category-discounts" class="category-discounts"></div>
+        </div>
+      </div>
+      <div class="admin-actions">
+        <button class="btn" id="save-discounts">Сохранить</button>
+        <button class="btn ghost" id="reset-discounts">Сбросить</button>
+        <div class="note">Максимум 60% на товар. Изменения сохраняются в браузере.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">Сделано просто и по делу</div>
+
+  <script>
+    const products = [
+      { id: "c05", name: "Coca-Cola Classic 0.5 л", category: "Classic", volume: 0.5, sugar: "с сахаром", price: 70, stock: 12, pack: "бутылка" },
+      { id: "c10", name: "Coca-Cola Classic 1 л", category: "Classic", volume: 1, sugar: "с сахаром", price: 110, stock: 20, pack: "бутылка" },
+      { id: "c20", name: "Coca-Cola Classic 2 л", category: "Classic", volume: 2, sugar: "с сахаром", price: 170, stock: 8, pack: "бутылка" },
+      { id: "c033", name: "Coca-Cola Classic 0.33 л", category: "Classic", volume: 0.33, sugar: "с сахаром", price: 55, stock: 30, pack: "банка" },
+      { id: "z05", name: "Coca-Cola Zero 0.5 л", category: "Zero", volume: 0.5, sugar: "без сахара", price: 75, stock: 15, pack: "бутылка" },
+      { id: "z10", name: "Coca-Cola Zero 1 л", category: "Zero", volume: 1, sugar: "без сахара", price: 120, stock: 10, pack: "бутылка" },
+      { id: "z033", name: "Coca-Cola Zero 0.33 л", category: "Zero", volume: 0.33, sugar: "без сахара", price: 60, stock: 25, pack: "банка" },
+      { id: "ch05", name: "Coca-Cola Cherry 0.5 л", category: "Cherry", volume: 0.5, sugar: "с сахаром", price: 85, stock: 6, pack: "бутылка" },
+      { id: "en025", name: "Coca-Cola Energy 0.25 л", category: "Energy", volume: 0.25, sugar: "с сахаром", price: 90, stock: 9, pack: "банка" },
+      { id: "mix6", name: "Набор микс 6 банок", category: "Наборы", volume: 2, sugar: "разное", price: 320, stock: 5, pack: "набор" },
+      { id: "mix12", name: "Набор микс 12 банок", category: "Наборы", volume: 4, sugar: "разное", price: 590, stock: 3, pack: "набор" },
+      { id: "cup", name: "Стакан Coca-Cola", category: "Аксессуары", volume: 0, sugar: "нет", price: 150, stock: 12, pack: "аксессуар" },
+      { id: "cap", name: "Кепка Coca-Cola", category: "Аксессуары", volume: 0, sugar: "нет", price: 420, stock: 4, pack: "аксессуар" },
+      { id: "mag", name: "Магнитик Coca-Cola", category: "Аксессуары", volume: 0, sugar: "нет", price: 60, stock: 40, pack: "аксессуар" }
+    ];
+
+    const categories = Array.from(new Set(products.map(p => p.category)));
+    const sugarTypes = Array.from(new Set(products.map(p => p.sugar)));
+
+    const cart = JSON.parse(localStorage.getItem("cola_cart") || "{}");
+
+    const defaultDiscounts = {
+      global: 0,
+      cartThreshold: 1200,
+      cartPercent: 5,
+      categories: {}
+    };
+
+    function getDiscounts() {
+      const stored = JSON.parse(localStorage.getItem("cola_discounts") || "null");
+      const base = JSON.parse(JSON.stringify(defaultDiscounts));
+      categories.forEach(c => base.categories[c] = 0);
+      if (stored) {
+        if (typeof stored.global === "number") base.global = stored.global;
+        if (typeof stored.cartThreshold === "number") base.cartThreshold = stored.cartThreshold;
+        if (typeof stored.cartPercent === "number") base.cartPercent = stored.cartPercent;
+        if (stored.categories) {
+          categories.forEach(c => {
+            if (typeof stored.categories[c] === "number") base.categories[c] = stored.categories[c];
+          });
         }
-        balEl.innerText = balance;
+      }
+      return base;
+    }
 
-        function resetGame() {
-            if(confirm("Сбросить баланс до 2500$?")) {
-                balance = 2500; updateBal(0); window.location.reload();
-            }
-        }
+    let discounts = getDiscounts();
 
-        function setGame(id, btn) {
-            document.querySelectorAll('.game-scene').forEach(e => e.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-            document.getElementById('g-'+id).classList.add('active');
-            if(btn) btn.classList.add('active');
-        }
+    const categoryListEl = document.getElementById("category-list");
+    const sugarListEl = document.getElementById("sugar-list");
+    const productListEl = document.getElementById("product-list");
+    const cartListEl = document.getElementById("cart-list");
 
-        /* --- 1. SLOTS (Motion Blur) --- */
-        const syms = ['🍒','🍋','🍇','💎','7️⃣','🔔'];
-        function spinSlots() {
-            if(balance < 50) return alert('Мало денег');
-            updateBal(-50);
-            
-            const btn = document.getElementById('btn-slots');
-            btn.disabled = true;
-            document.getElementById('slot-msg').innerText = "Вращение...";
-            
-            const reels = [document.getElementById('r1'), document.getElementById('r2'), document.getElementById('r3')];
-            
-            // Start Anim
-            reels.forEach(r => {
-                r.classList.add('blur-anim');
-                r.innerText = ""; 
-            });
+    function formatPrice(value) {
+      return new Intl.NumberFormat("ru-RU").format(Math.round(value)) + " ₽";
+    }
 
-            let res = [];
-            // Stop logic with stagger
-            [0,1,2].forEach(i => {
-                setTimeout(() => {
-                    reels[i].classList.remove('blur-anim');
-                    let s = syms[Math.floor(Math.random()*syms.length)];
-                    reels[i].innerText = s;
-                    res.push(s);
-                    // Bounce
-                    reels[i].style.transform = "translateY(-10px)";
-                    setTimeout(()=> reels[i].style.transform = "translateY(0)", 150);
-                    
-                    if(i===2) checkSlots(res, btn);
-                }, 800 + (i*400));
-            });
-        }
-        function checkSlots(res, btn) {
-            let win = 0;
-            if(res[0]==res[1] && res[1]==res[2]) {
-                if(res[0]=='7️⃣') win=500; else win=100;
-            } else if(res[0]==res[1] || res[1]==res[2]) win=10;
-            
-            if(win > 0) {
-                updateBal(win*50); // mult base bet
-                document.getElementById('slot-msg').innerText = `ВЫИГРЫШ: ${win*50}$`;
-                document.getElementById('slot-msg').style.color = "var(--green)";
-            } else {
-                document.getElementById('slot-msg').innerText = "Попробуй еще";
-                document.getElementById('slot-msg').style.color = "#888";
-            }
-            btn.disabled = false;
-        }
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
 
-        /* --- 2. MINES (3D Flip) --- */
-        let mActive=false, mMap=[], mBet=0, mRev=0, mTot=3;
-        function startMines() {
-            if(mActive) return;
-            let b = parseInt(document.getElementById('mines-bet').value);
-            let c = parseInt(document.getElementById('mines-count').value);
-            if(b>balance || b<=0) return;
-            
-            updateBal(-b); mBet=b; mTot=c; mRev=0; mActive=true;
-            mMap = Array(25).fill(0);
-            let placed=0;
-            while(placed<c) { let k=Math.floor(Math.random()*25); if(!mMap[k]){ mMap[k]=1; placed++; }}
+    function itemDiscountPercent(product) {
+      const base = (discounts.global || 0) + (discounts.categories[product.category] || 0);
+      return clamp(base, 0, 60);
+    }
 
-            const grid = document.getElementById('mines-grid');
-            grid.innerHTML = "";
-            for(let i=0; i<25; i++) {
-                let w = document.createElement('div'); w.className = 'tile-wrapper';
-                w.innerHTML = `<div class="tile-front"></div><div class="tile-back"></div>`;
-                w.onclick = () => hitMine(i, w);
-                grid.appendChild(w);
-            }
-            document.getElementById('btn-mines-start').style.display='none';
-            document.getElementById('btn-mines-out').style.display='block';
-            document.getElementById('mines-status').innerText = "Ищем...";
-        }
-        function hitMine(i, el) {
-            if(!mActive || el.classList.contains('flipped')) return;
-            el.classList.add('flipped');
-            let back = el.querySelector('.tile-back');
-            
-            if(mMap[i]===1) {
-                back.innerText = "💣"; back.classList.add('boom');
-                mActive=false;
-                setTimeout(()=> revealAll(false), 500);
-                document.getElementById('mines-status').innerText = "ВЗРЫВ!";
-            } else {
-                back.innerText = "💎"; back.classList.add('gem');
-                mRev++;
-                let multi = 1; 
-                for(let k=0; k<mRev; k++) multi *= (25-k)/(25-mTot-k);
-                let win = Math.floor(mBet * multi);
-                document.getElementById('btn-mines-out').innerText = `ЗАБРАТЬ ${win}$`;
-            }
-        }
-        function cashoutMines() {
-            if(!mActive) return;
-            let multi = 1; for(let k=0; k<mRev; k++) multi *= (25-k)/(25-mTot-k);
-            updateBal(Math.floor(mBet*multi));
-            mActive=false; revealAll(true);
-        }
-        function revealAll(win) {
-            document.getElementById('btn-mines-start').style.display='block';
-            document.getElementById('btn-mines-out').style.display='none';
-            let tiles = document.querySelectorAll('.tile-wrapper');
-            tiles.forEach((t, i) => {
-                if(mMap[i]===1) {
-                    t.classList.add('flipped');
-                    t.querySelector('.tile-back').innerText = "💣";
-                    if(win) t.style.opacity = 0.3;
-                }
-            });
-        }
+    function itemPrice(product) {
+      const disc = itemDiscountPercent(product);
+      const price = Math.round(product.price * (1 - disc / 100));
+      return { price, disc };
+    }
 
-        /* --- 3. STAIRS (Standard) --- */
-        let sActive=false, sLvl=0, sBet=0;
-        function startStairs() {
-            if(sActive) return;
-            let b = parseInt(document.getElementById('stairs-bet').value);
-            if(b>balance || b<=0) return;
-            updateBal(-b); sBet=b; sLvl=0; sActive=true;
-            
-            const f = document.getElementById('stairs-field'); f.innerHTML="";
-            for(let r=0; r<7; r++) {
-                let row = document.createElement('div'); row.className = 's-row';
-                if(r===0) row.classList.add('active');
-                let bomb = Math.floor(Math.random()*3);
-                for(let c=0; c<3; c++) {
-                    let btn = document.createElement('div'); btn.className='s-btn'; btn.innerText='?';
-                    btn.onclick = () => clickStair(r, c, bomb, btn, row);
-                    row.appendChild(btn);
-                }
-                f.appendChild(row);
-            }
-            toggleStairsBtn(true);
-        }
-        function clickStair(r, c, bomb, btn, row) {
-            if(!sActive || r!==sLvl) return;
-            if(c===bomb) {
-                btn.classList.add('lose'); btn.innerText='🗿';
-                sActive=false; toggleStairsBtn(false);
-            } else {
-                btn.classList.add('win'); btn.innerText='💰';
-                sLvl++;
-                row.classList.remove('active');
-                if(sLvl<7) {
-                    document.querySelectorAll('.s-row')[sLvl].classList.add('active');
-                    let win = Math.floor(sBet * Math.pow(1.5, sLvl));
-                    document.getElementById('btn-stairs-out').innerText = `ЗАБРАТЬ ${win}$`;
-                } else {
-                    cashoutStairs();
-                }
-            }
-        }
-        function cashoutStairs() {
-            if(!sActive) return;
-            updateBal(Math.floor(sBet * Math.pow(1.5, sLvl)));
-            sActive=false; toggleStairsBtn(false);
-        }
-        function toggleStairsBtn(ingame) {
-            document.getElementById('btn-stairs-start').style.display = ingame ? 'none':'block';
-            document.getElementById('btn-stairs-out').style.display = ingame ? 'block':'none';
-        }
+    function buildFilters() {
+      categoryListEl.innerHTML = categories.map(c => {
+        return '<label class="check"><input type="checkbox" value="' + c + '" checked> ' + c + "</label>";
+      }).join("");
+      sugarListEl.innerHTML = sugarTypes.map(s => {
+        return '<label class="check"><input type="checkbox" value="' + s + '" checked> ' + s + "</label>";
+      }).join("");
+    }
 
-        /* --- 4. ROCKET (Smooth Loop) --- */
-        let rFly=false, rInt, rMul=1.00;
-        function startRocket() {
-            if(rFly) return;
-            let b = parseInt(document.getElementById('rocket-bet').value);
-            if(b>balance || b<=0) return;
-            updateBal(-b); rFly=true; rMul=1.00;
-            
-            document.getElementById('btn-rocket-start').style.display='none';
-            document.getElementById('btn-rocket-out').style.display='block';
-            document.getElementById('rocket-icon').innerText = '🚀';
-            document.getElementById('rocket-txt').style.color = "rgba(255,255,255,0.1)";
+    function getFilterState() {
+      const selectedCategories = Array.from(categoryListEl.querySelectorAll("input:checked")).map(i => i.value);
+      const selectedSugar = Array.from(sugarListEl.querySelectorAll("input:checked")).map(i => i.value);
+      return {
+        search: document.getElementById("search").value.trim().toLowerCase(),
+        categories: selectedCategories,
+        sugar: selectedSugar,
+        minPrice: parseFloat(document.getElementById("min-price").value) || 0,
+        maxPrice: parseFloat(document.getElementById("max-price").value) || 0,
+        minVolume: parseFloat(document.getElementById("min-volume").value) || 0,
+        maxVolume: parseFloat(document.getElementById("max-volume").value) || 0,
+        inStock: document.getElementById("in-stock").checked,
+        sort: document.getElementById("sort").value
+      };
+    }
 
-            let crash = 1.00 + Math.random() * Math.random() * 10; // Simple weighted curve
-            if(Math.random()<0.3) crash = 1.00 + Math.random(); // 30% early crash
+    function applyFilters(list, f) {
+      let res = list.filter(p => {
+        const matchSearch = p.name.toLowerCase().includes(f.search);
+        const matchCategory = f.categories.length ? f.categories.includes(p.category) : true;
+        const matchSugar = f.sugar.length ? f.sugar.includes(p.sugar) : true;
+        const matchPriceMin = f.minPrice ? p.price >= f.minPrice : true;
+        const matchPriceMax = f.maxPrice ? p.price <= f.maxPrice : true;
+        const matchVolumeMin = f.minVolume ? p.volume >= f.minVolume : true;
+        const matchVolumeMax = f.maxVolume ? p.volume <= f.maxVolume : true;
+        const matchStock = f.inStock ? p.stock > 0 : true;
+        return matchSearch && matchCategory && matchSugar && matchPriceMin && matchPriceMax && matchVolumeMin && matchVolumeMax && matchStock;
+      });
 
-            let t=0;
-            rInt = setInterval(() => {
-                t+=0.05;
-                rMul += t*0.01;
-                document.getElementById('rocket-txt').innerText = rMul.toFixed(2)+'x';
-                
-                // Visuals
-                let pct = Math.min((rMul-1)*20, 90);
-                let ic = document.getElementById('rocket-icon');
-                ic.style.bottom = (10 + pct) + '%';
-                ic.style.left = (10 + pct/2) + '%';
+      if (f.sort === "price-asc") res.sort((a, b) => a.price - b.price);
+      if (f.sort === "price-desc") res.sort((a, b) => b.price - a.price);
+      if (f.sort === "volume-asc") res.sort((a, b) => a.volume - b.volume);
+      if (f.sort === "volume-desc") res.sort((a, b) => b.volume - a.volume);
+      if (f.sort === "name-asc") res.sort((a, b) => a.name.localeCompare(b.name, "ru"));
 
-                if(rMul >= crash) {
-                    clearInterval(rInt); rFly=false;
-                    document.getElementById('rocket-txt').style.color = "var(--red)";
-                    document.getElementById('rocket-txt').innerText = "CRASH @ " + crash.toFixed(2)+'x';
-                    document.getElementById('rocket-icon').innerText = '💥';
-                    toggleRockBtn(false);
-                }
-            }, 50);
-        }
-        function cashoutRocket() {
-            if(!rFly) return;
-            clearInterval(rInt); rFly=false;
-            let win = Math.floor(document.getElementById('rocket-bet').value * rMul);
-            updateBal(win);
-            document.getElementById('rocket-txt').style.color = "var(--green)";
-            toggleRockBtn(false);
-        }
-        function toggleRockBtn(ingame) {
-            document.getElementById('btn-rocket-start').style.display = ingame ? 'none':'block';
-            document.getElementById('btn-rocket-out').style.display = ingame ? 'block':'none';
-        }
+      return res;
+    }
 
-        /* --- 5. PLINKO (HARDCORE & SMOOTH) --- */
-        const rows = 12; // Harder
-        const pegsEl = document.getElementById('p-pegs');
-        const bucketsEl = document.getElementById('p-buckets');
-        // Multipliers: Center is BAD (0.2), Edges GOOD (100)
-        const mults = [100, 25, 5, 2, 0.5, 0.2, 0.2, 0.5, 2, 5, 25, 100]; 
-        // Need mults.length = rows + 1? No, 12 rows means 13 slots. My array is 12 long.
-        // Let's adjust to 12 rows -> 13 slots.
-        const pValues = [100, 25, 10, 5, 2, 0.5, 0.2, 0.5, 2, 5, 10, 25, 100];
+    function renderProducts() {
+      const f = getFilterState();
+      const filtered = applyFilters(products, f);
 
-        // Init Board
-        function initPlinko() {
-            pegsEl.innerHTML=""; bucketsEl.innerHTML="";
-            for(let r=0; r<rows; r++) {
-                let row = document.createElement('div'); row.className='plinko-row';
-                for(let p=0; p<=r+2; p++) {
-                    let dot = document.createElement('div'); dot.className='peg';
-                    row.appendChild(dot);
-                }
-                pegsEl.appendChild(row);
-            }
-            pValues.forEach(v => {
-                let b = document.createElement('div'); b.className='bucket'; 
-                b.innerText = v+'x';
-                // Color coding
-                if(v>=10) b.style.backgroundColor = "var(--red)";
-                else if(v>=2) b.style.backgroundColor = "var(--gold)";
-                else b.style.backgroundColor = "#333";
-                bucketsEl.appendChild(b);
-            });
-        }
-        initPlinko();
+      document.getElementById("count-info").textContent = "Показано " + filtered.length + " из " + products.length;
 
-        function dropPlinko() {
-            let b = parseInt(document.getElementById('plinko-bet').value);
-            if(b>balance || b<=0) return;
-            updateBal(-b);
+      productListEl.innerHTML = filtered.map(p => {
+        const priceInfo = itemPrice(p);
+        const hasDiscount = priceInfo.disc > 0;
+        const out = p.stock <= 0;
+        return `
+          <div class="card">
+            <div class="badge">${p.category}</div>
+            <div class="name">${p.name}</div>
+            <div class="meta">
+              <span>${p.pack}</span>
+              <span>${p.volume ? p.volume + " л" : "без объема"}</span>
+              <span>${p.sugar}</span>
+            </div>
+            <div class="price">
+              ${hasDiscount ? '<span class="old">' + formatPrice(p.price) + '</span>' : ''}
+              <span>${formatPrice(priceInfo.price)}</span>
+            </div>
+            <div class="stock ${out ? "out" : ""}">${out ? "нет в наличии" : "в наличии: " + p.stock}</div>
+            <div class="actions">
+              <button class="btn" data-add="${p.id}" ${out ? "disabled" : ""}>В корзину</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
 
-            const ball = document.createElement('div'); ball.className='p-ball';
-            document.getElementById('p-balls-layer').appendChild(ball);
+    function saveCart() {
+      localStorage.setItem("cola_cart", JSON.stringify(cart));
+    }
 
-            // Physics sim
-            let currentRow = 0;
-            let currentIdx = 0; // Relative from center? No, simpler to track index in row
-            
-            // Start pos: center of top row (width calc is tricky, let's use fixed steps)
-            // Visual approximation logic:
-            let startX = pegsEl.offsetWidth / 2;
-            let startY = 10;
-            let stepY = 24; // approx height of row + margin
-            let stepX = 15; // approx half width of spread
+    function updateMiniCart(totals) {
+      document.getElementById("mini-count").textContent = totals.count;
+      document.getElementById("mini-total").textContent = formatPrice(totals.total);
+    }
 
-            let x = startX; 
-            let y = startY;
+    function calcTotals() {
+      let baseTotal = 0;
+      let discountedTotal = 0;
+      let count = 0;
 
-            let path = [];
-            // Calculate Path (Pure 50/50 Math = Hard Center bias)
-            for(let i=0; i<rows; i++) {
-                let dir = Math.random() > 0.5 ? 1 : -1;
-                path.push(dir);
-            }
+      Object.keys(cart).forEach(id => {
+        const product = products.find(p => p.id === id);
+        if (!product) return;
+        const qty = cart[id];
+        const priceInfo = itemPrice(product);
+        baseTotal += product.price * qty;
+        discountedTotal += priceInfo.price * qty;
+        count += qty;
+      });
 
-            // Animate
-            let step = 0;
-            function animateDrop() {
-                if(step >= rows) {
-                    // Finish
-                    ball.remove();
-                    // Calc result slot. Start 0 is center? 
-                    // Let's count rights. 12 steps. 
-                    // 0 rights = index 0. 12 rights = index 12.
-                    let rights = path.filter(d => d === 1).length;
-                    // Actually, the visual grid adds 1 peg per row.
-                    // Start: 3 pegs. End: 15 pegs. 
-                    // The ball falls between pegs. 13 slots.
-                    // Standard plinko map: Slot = sum(rights)
-                    let slotIdx = rights; 
-                    
-                    let m = pValues[slotIdx];
-                    let win = Math.floor(b * m);
-                    if(win>0) updateBal(win);
-                    
-                    // Visual Hit
-                    let bucket = bucketsEl.children[slotIdx];
-                    bucket.classList.add('hit');
-                    setTimeout(() => bucket.classList.remove('hit'), 200);
-                    return;
-                }
+      const itemDiscount = Math.max(0, baseTotal - discountedTotal);
+      let cartDiscount = 0;
 
-                // Move ball
-                y += stepY;
-                x += (path[step] * stepX);
-                
-                ball.style.top = y + 'px';
-                ball.style.left = x + 'px';
-                
-                step++;
-                setTimeout(animateDrop, 80); // Speed
-            }
-            // Init Pos
-            ball.style.top = y+'px'; ball.style.left=x+'px';
-            setTimeout(animateDrop, 80);
-        }
+      if (discounts.cartThreshold > 0 && discountedTotal >= discounts.cartThreshold && discounts.cartPercent > 0) {
+        cartDiscount = Math.round(discountedTotal * discounts.cartPercent / 100);
+      }
 
-        /* --- 6. WHEEL (Smooth Spin) --- */
-        let wSpin=false, wCol=null;
-        const wSegs = ['gold','black','red','black','red','black','red','black','red','black','red','black','red','black','red'];
-        // Generate CSS Conic
-        let css = "conic-gradient(";
-        let deg = 360/15;
-        wSegs.forEach((c,i) => {
-            let color = c=='gold'?'#ffd700':(c=='red'?'#cc0000':'#111');
-            css += `${color} ${i*deg}deg ${(i+1)*deg}deg,`;
-        });
-        css = css.slice(0,-1)+")";
-        document.getElementById('wheel-el').style.background = css;
+      const total = Math.max(0, discountedTotal - cartDiscount);
 
-        function pickWheelColor(c, el) {
-            if(wSpin) return;
-            wCol=c;
-            document.querySelectorAll('.cp-btn').forEach(b=>b.classList.remove('sel'));
-            el.classList.add('sel');
-            document.getElementById('btn-wheel').disabled = false;
-        }
-        function spinWheel() {
-            if(wSpin || !wCol) return;
-            let b = parseInt(document.getElementById('wheel-bet').value);
-            if(b>balance || b<=0) return;
-            updateBal(-b); wSpin=true; document.getElementById('btn-wheel').disabled=true;
+      return { baseTotal, discountedTotal, itemDiscount, cartDiscount, total, count };
+    }
 
-            let randIdx = Math.floor(Math.random()*15);
-            let resColor = wSegs[randIdx];
-            
-            // Math for rotation to land on index
-            // Index 0 is at 0-24deg (Top Right). Pointer is Top Center (0deg).
-            // Rotation must be Counter-Clockwise to bring index to top? 
-            // Or Clockwise negative.
-            // Target Angle = 360 - (randIdx * 24 + 12); // Center of segment
-            let segmentAngle = 24;
-            let target = 360 - (randIdx * segmentAngle + segmentAngle/2);
-            let spins = 360 * 5; // 5 full spins
-            let finalRot = spins + target;
+    function renderCart() {
+      const items = Object.keys(cart).map(id => {
+        const product = products.find(p => p.id === id);
+        if (!product) return null;
+        const qty = cart[id];
+        const priceInfo = itemPrice(product);
+        return { product, qty, priceInfo };
+      }).filter(Boolean);
 
-            const el = document.getElementById('wheel-el');
-            el.style.transition = "transform 4s cubic-bezier(0.1, 0.9, 0.2, 1)";
-            el.style.transform = `rotate(${finalRot}deg)`;
+      if (!items.length) {
+        cartListEl.innerHTML = "<div class='note'>Корзина пустая</div>";
+      } else {
+        cartListEl.innerHTML = items.map(item => {
+          const p = item.product;
+          const qty = item.qty;
+          const linePrice = item.priceInfo.price * qty;
+          return `
+            <div class="cart-item">
+              <div class="ci-name">${p.name}</div>
+              <div class="ci-meta">${p.pack} • ${p.volume ? p.volume + " л" : "без объема"} • ${formatPrice(item.priceInfo.price)} / шт</div>
+              <div class="ci-controls">
+                <button data-action="dec" data-id="${p.id}">-</button>
+                <span>${qty}</span>
+                <button data-action="inc" data-id="${p.id}">+</button>
+                <button data-action="remove" data-id="${p.id}">убрать</button>
+                <span style="margin-left: auto; font-weight: 700;">${formatPrice(linePrice)}</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
 
-            setTimeout(() => {
-                wSpin=false;
-                el.style.transition = "none";
-                el.style.transform = `rotate(${target}deg)`; // reset
-                
-                let win=0;
-                if(resColor===wCol) {
-                    let m = wCol==='gold'?14:2;
-                    win = b*m;
-                    updateBal(win);
-                    alert(`WIN! ${win}$`);
-                }
-                document.getElementById('btn-wheel').disabled = false;
-            }, 4000);
-        }
+      const totals = calcTotals();
+      document.getElementById("cart-subtotal").textContent = formatPrice(totals.baseTotal);
+      document.getElementById("cart-item-discount").textContent = "-" + formatPrice(totals.itemDiscount);
+      document.getElementById("cart-cart-discount").textContent = "-" + formatPrice(totals.cartDiscount);
+      document.getElementById("cart-total").textContent = formatPrice(totals.total);
+      updateMiniCart(totals);
+    }
 
-    </script>
+    function addToCart(id) {
+      cart[id] = (cart[id] || 0) + 1;
+      saveCart();
+      renderCart();
+    }
+
+    function changeQty(id, delta) {
+      if (!cart[id]) return;
+      cart[id] += delta;
+      if (cart[id] <= 0) delete cart[id];
+      saveCart();
+      renderCart();
+    }
+
+    function removeItem(id) {
+      delete cart[id];
+      saveCart();
+      renderCart();
+    }
+
+    function initAdminPanel() {
+      document.getElementById("global-discount").value = discounts.global;
+      document.getElementById("cart-threshold").value = discounts.cartThreshold;
+      document.getElementById("cart-percent").value = discounts.cartPercent;
+
+      const container = document.getElementById("category-discounts");
+      container.innerHTML = categories.map(c => {
+        return `
+          <div class="cat-line">
+            <span>${c}</span>
+            <input type="number" min="0" max="60" data-cat="${c}" value="${discounts.categories[c] || 0}">
+          </div>
+        `;
+      }).join("");
+    }
+
+    function saveDiscounts() {
+      discounts.global = clamp(parseFloat(document.getElementById("global-discount").value) || 0, 0, 60);
+      discounts.cartThreshold = Math.max(0, parseFloat(document.getElementById("cart-threshold").value) || 0);
+      discounts.cartPercent = clamp(parseFloat(document.getElementById("cart-percent").value) || 0, 0, 30);
+
+      document.querySelectorAll("#category-discounts input").forEach(input => {
+        const cat = input.dataset.cat;
+        discounts.categories[cat] = clamp(parseFloat(input.value) || 0, 0, 60);
+      });
+
+      localStorage.setItem("cola_discounts", JSON.stringify(discounts));
+      renderProducts();
+      renderCart();
+    }
+
+    function resetDiscounts() {
+      localStorage.removeItem("cola_discounts");
+      discounts = getDiscounts();
+      initAdminPanel();
+      renderProducts();
+      renderCart();
+    }
+
+    buildFilters();
+    renderProducts();
+    renderCart();
+    initAdminPanel();
+
+    document.getElementById("product-list").addEventListener("click", e => {
+      const btn = e.target.closest("[data-add]");
+      if (btn) addToCart(btn.dataset.add);
+    });
+
+    cartListEl.addEventListener("click", e => {
+      const action = e.target.dataset.action;
+      const id = e.target.dataset.id;
+      if (!action || !id) return;
+      if (action === "inc") changeQty(id, 1);
+      if (action === "dec") changeQty(id, -1);
+      if (action === "remove") removeItem(id);
+    });
+
+    document.querySelectorAll(".filters input, .filters select").forEach(el => {
+      el.addEventListener("input", renderProducts);
+      el.addEventListener("change", renderProducts);
+    });
+
+    document.getElementById("reset-filters").addEventListener("click", () => {
+      document.getElementById("search").value = "";
+      document.getElementById("min-price").value = "";
+      document.getElementById("max-price").value = "";
+      document.getElementById("min-volume").value = "";
+      document.getElementById("max-volume").value = "";
+      document.getElementById("in-stock").checked = false;
+      document.getElementById("sort").value = "default";
+      categoryListEl.querySelectorAll("input").forEach(i => i.checked = true);
+      sugarListEl.querySelectorAll("input").forEach(i => i.checked = true);
+      renderProducts();
+    });
+
+    document.getElementById("clear-cart").addEventListener("click", () => {
+      Object.keys(cart).forEach(k => delete cart[k]);
+      saveCart();
+      renderCart();
+    });
+
+    document.getElementById("save-discounts").addEventListener("click", saveDiscounts);
+    document.getElementById("reset-discounts").addEventListener("click", resetDiscounts);
+  </script>
 </body>
 </html>
